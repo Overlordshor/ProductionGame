@@ -1,0 +1,19 @@
+## Unity ##
+
+[merge]
+tool = unityyamlmerge
+
+[mergetool "unityyamlmerge"]
+trustExitCode = false
+cmd = '<path to UnityYAMLMerge>' merge -p "$BASE" "$REMOTE" "$LOCAL" "$MERGED"
+
+#UnityYAMLMerge
+*.mat merge=unityyamlmerge
+*.anim merge=unityyamlmerge
+*.unity merge=unityyamlmerge
+*.prefab merge=unityyamlmerge
+*.physicsMaterial2D merge=unityyamlmerge
+*.physicsMaterial merge=unityyamlmerge
+*.asset merge=unityyamlmerge
+*.meta merge=unityyamlmerge
+*.controller merge=unityyamlmerge
