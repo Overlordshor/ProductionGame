@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using ProductionGame.Controllers;
 using ProductionGame.GameView;
 using ProductionGame.Models;
 using ProductionGame.SO;
@@ -15,10 +18,16 @@ namespace ProductionGame.Factories
     public class BuildingFactory : ViewFactory, IBuildingFactory
     {
         private readonly BuildingSettings _buildingSettings;
+        private readonly IStorageController _storageController;
+        private readonly List<IDisposable> _disposables;
 
-        public BuildingFactory(BuildingSettings buildingSettings)
+        public BuildingFactory(BuildingSettings buildingSettings,
+            IStorageController storageController,
+            List<IDisposable> disposables)
         {
             _buildingSettings = buildingSettings;
+            _storageController = storageController;
+            _disposables = disposables;
         }
 
         public IBuildingView<ResourceBuildingModel> CreateResourceBuilding(int index)
@@ -27,8 +36,20 @@ namespace ProductionGame.Factories
             var position = resourceBuildingSettings.ResourceBuildingPositions[index];
             var view = InstantiatePrefab(resourceBuildingSettings.ResourceBuildingMenuPrefab, position);
             var resourceBuildingModel = new ResourceBuildingModel(resourceBuildingSettings.ProductionInterval);
+            resourceBuildingModel.OnResourceProduced += _storageController.AddResource;
+            resourceBuildingModel.OnDisposed += UnsubscribeAll;
+
+            _disposables.Add(resourceBuildingModel);
+            _disposables.Add(view);
+
             view.Initialize(resourceBuildingModel);
             return view;
+
+            void UnsubscribeAll()
+            {
+                resourceBuildingModel.OnResourceProduced -= _storageController.AddResource;
+                resourceBuildingModel.OnDisposed -= UnsubscribeAll;
+            }
         }
 
         public GameObject CreateProcessingBuilding()

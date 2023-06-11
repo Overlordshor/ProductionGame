@@ -15,9 +15,17 @@ namespace ProductionGame.Controllers
         public ResourceBuildingController(IResourceBuildingMenuView resourceBuildingMenuView)
         {
             _resourceBuildingMenuView = resourceBuildingMenuView;
-            _resourceBuildingMenuView.OnCellClicked += StartProduction;
+            _resourceBuildingMenuView.OnCellClicked += SelectResource;
             _resourceBuildingMenuView.OnStartClicked += StartProduction;
             _resourceBuildingMenuView.OnStopClicked += StopProduction;
+
+            _resourceBuildingMenuView.SetStartButtonActive(false);
+        }
+
+        private void SelectResource(ResourceBuildingModel resourceBuilding, ResourceType resourceType)
+        {
+            resourceBuilding.SetCurrentResource(resourceType);
+            _resourceBuildingMenuView.SetStartButtonActive(!resourceBuilding.IsProductionActive);
         }
 
         public void ShowResourceBuildingWindow(ResourceBuildingModel resourceBuilding)
@@ -27,8 +35,8 @@ namespace ProductionGame.Controllers
 
         private void StartProduction(ResourceBuildingModel resourceBuilding)
         {
-            resourceBuilding.StartProduction();
             _resourceBuildingMenuView.SetStartButtonActive(false);
+            resourceBuilding.StartProductionAsync().ConfigureAwait(false);
         }
 
         private void StopProduction(ResourceBuildingModel resourceBuilding)

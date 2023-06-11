@@ -1,27 +1,35 @@
 using System;
-using UnityEngine;
+using System.Threading.Tasks;
 
 namespace ProductionGame.Models
 {
-    public class ResourceBuildingModel
+    public class ResourceBuildingModel : IDisposable
     {
-        private int _currentResourceIndex;
-        private float _productionInterval;
-        private float _timer;
+        public event Action<ResourceType> OnResourceProduced;
+        public event Action OnDisposed;
 
-        public bool IsProductionActive { get; private set; }
+        private ResourceType _currentResourceType;
+        private float _productionInterval;
 
         public ResourceBuildingModel(float productionInterval)
         {
             _productionInterval = productionInterval;
-            _timer = 0f;
-            _currentResourceIndex = 0;
         }
 
-        public void StartProduction()
+        public bool IsProductionActive { get; private set; }
+
+
+        public async Task StartProductionAsync()
         {
+            if (IsProductionActive)
+                return;
+
+            if (_currentResourceType == ResourceType.None)
+                throw new InvalidOperationException();
+
             IsProductionActive = true;
-            _timer = 0f;
+
+            await ProduceResourcesAsync();
         }
 
         public void StopProduction()
@@ -29,29 +37,24 @@ namespace ProductionGame.Models
             IsProductionActive = false;
         }
 
-        public void UpdateProduction()
+        public void SetCurrentResource(ResourceType resourceType)
         {
-            if (!IsProductionActive)
-                return;
+            _currentResourceType = resourceType;
+        }
 
-            _timer += Time.deltaTime;
-
-            if (_timer >= _productionInterval)
+        private async Task ProduceResourcesAsync()
+        {
+            while (IsProductionActive)
             {
-                _timer -= _productionInterval;
-                ProduceResource();
+                await Task.Delay(TimeSpan.FromSeconds(_productionInterval));
+                OnResourceProduced?.Invoke(_currentResourceType);
             }
         }
 
-        private void ProduceResource()
+        public void Dispose()
         {
-            var resourceType = (ResourceType)_currentResourceIndex;
-            //TODO: storage
-
-            if (resourceType == ResourceType.None)
-                throw new InvalidCastException();
-
-            _currentResourceIndex++;
+            OnResourceProduced = null;
+            OnDisposed?.Invoke();
         }
     }
 }

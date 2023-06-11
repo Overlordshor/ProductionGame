@@ -8,7 +8,7 @@ namespace ProductionGame.UI
 {
     public interface IResourceBuildingMenuView : IDisposable
     {
-        event Action<ResourceBuildingModel> OnCellClicked;
+        event Action<ResourceBuildingModel, ResourceType> OnCellClicked;
         event Action<ResourceBuildingModel> OnStartClicked;
         event Action<ResourceBuildingModel> OnStopClicked;
 
@@ -18,7 +18,7 @@ namespace ProductionGame.UI
 
     public class ResourceBuildingMenuView : MonoBehaviour, IResourceBuildingMenuView
     {
-        public event Action<ResourceBuildingModel> OnCellClicked;
+        public event Action<ResourceBuildingModel, ResourceType> OnCellClicked;
         public event Action<ResourceBuildingModel> OnStartClicked;
         public event Action<ResourceBuildingModel> OnStopClicked;
 
@@ -40,7 +40,7 @@ namespace ProductionGame.UI
             {
                 var cellObject = Instantiate(_cellPrefab, _cellsContainer);
                 cellObject.SetText(resource.ToString());
-                cellObject.Subscribe(() => OnCellClicked?.Invoke(resourceBuilding));
+                cellObject.Subscribe(() => OnCellClicked?.Invoke(resourceBuilding, resource));
             }
 
 
