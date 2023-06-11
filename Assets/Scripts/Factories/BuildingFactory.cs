@@ -11,32 +11,33 @@ namespace ProductionGame.Factories
     public interface IBuildingFactory
     {
         IBuildingView<ResourceBuildingModel> CreateResourceBuilding(int index);
-        GameObject CreateProcessingBuilding();
+        IBuildingView<ProcessingBuildingModel> CreateProcessingBuilding();
         GameObject CreateMarket();
     }
 
     public class BuildingFactory : ViewFactory, IBuildingFactory
     {
-        private readonly BuildingSettings _buildingSettings;
-        private readonly IStorageController _storageController;
         private readonly List<IDisposable> _disposables;
+        private readonly GameSettings _gameSettings;
+        private readonly IStorageController _storageController;
 
-        public BuildingFactory(BuildingSettings buildingSettings,
+        public BuildingFactory(GameSettings gameSettings,
             IStorageController storageController,
             List<IDisposable> disposables)
         {
-            _buildingSettings = buildingSettings;
+            _gameSettings = gameSettings;
             _storageController = storageController;
             _disposables = disposables;
         }
 
         public IBuildingView<ResourceBuildingModel> CreateResourceBuilding(int index)
         {
-            var resourceBuildingSettings = _buildingSettings.ResourceBuildingSettings;
-            var position = resourceBuildingSettings.ResourceBuildingPositions[index];
-            var view = InstantiatePrefab(resourceBuildingSettings.ResourceBuildingMenuPrefab, position);
+            var resourceBuildingSettings = _gameSettings.ResourceBuildingSettings[index];
+            var position = resourceBuildingSettings.BuildingPosition;
+            var view = InstantiateBuildingView<ResourceBuildingModel>(resourceBuildingSettings.BuildingPrefab,
+                position);
             var resourceBuildingModel = new ResourceBuildingModel(resourceBuildingSettings.ProductionInterval);
-            resourceBuildingModel.OnResourceProduced += _storageController.AddResource;
+            resourceBuildingModel.OnResourceProduced += _storageController.Add;
             resourceBuildingModel.OnDisposed += UnsubscribeAll;
 
             _disposables.Add(resourceBuildingModel);
@@ -47,20 +48,38 @@ namespace ProductionGame.Factories
 
             void UnsubscribeAll()
             {
-                resourceBuildingModel.OnResourceProduced -= _storageController.AddResource;
+                resourceBuildingModel.OnResourceProduced -= _storageController.Add;
                 resourceBuildingModel.OnDisposed -= UnsubscribeAll;
             }
         }
 
-        public GameObject CreateProcessingBuilding()
+        public IBuildingView<ProcessingBuildingModel> CreateProcessingBuilding()
         {
-            return InstantiatePrefab(_buildingSettings.ProcessingBuildingPrefab,
-                _buildingSettings.ProcessingBuildingPosition);
+            var processingBuildingSettings = _gameSettings.ProcessingBuildingSettings;
+            var position = processingBuildingSettings.BuildingPosition;
+            var view = InstantiateBuildingView<ProcessingBuildingModel>(processingBuildingSettings.BuildingPrefab,
+                position);
+            var processingBuildingModel = new ProcessingBuildingModel(processingBuildingSettings.ProductionInterval);
+            processingBuildingModel.OnProductProduced += _storageController.Add;
+            processingBuildingModel.OnDisposed += UnsubscribeAll;
+
+            _disposables.Add(processingBuildingModel);
+            _disposables.Add(view);
+
+            view.Initialize(processingBuildingModel);
+            return view;
+
+            void UnsubscribeAll()
+            {
+                processingBuildingModel.OnProductProduced -= _storageController.Add;
+                processingBuildingModel.OnDisposed -= UnsubscribeAll;
+            }
         }
 
         public GameObject CreateMarket()
         {
-            return InstantiatePrefab(_buildingSettings.MarketPrefab, _buildingSettings.MarketPosition);
+            return null;
+            //return InstantiateBuildingView(_gameSettings.MarketPrefab, _gameSettings.MarketPosition);
         }
     }
 }

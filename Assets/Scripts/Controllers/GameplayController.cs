@@ -14,18 +14,21 @@ namespace ProductionGame.Controllers
         private readonly IBuildingFactory _buildingFactory;
         private readonly IBuildingsViewRepository _buildingsViewRepository;
         private readonly GameContext _gameContext;
+        private readonly IProcessingBuildingController _processingBuildingController;
         private readonly IResourceBuildingController _resourceBuildingController;
 
 
         public GamePlayController(GameContext gameContext,
             IBuildingFactory buildingFactory,
             IResourceBuildingController resourceBuildingController,
-            IBuildingsViewRepository buildingsViewRepository)
+            IBuildingsViewRepository buildingsViewRepository,
+            IProcessingBuildingController processingBuildingController)
         {
             _gameContext = gameContext;
             _buildingFactory = buildingFactory;
             _resourceBuildingController = resourceBuildingController;
             _buildingsViewRepository = buildingsViewRepository;
+            _processingBuildingController = processingBuildingController;
         }
 
         public void CreateGame()
@@ -39,12 +42,10 @@ namespace ProductionGame.Controllers
             }
 
             var processingBuilding = _buildingFactory.CreateProcessingBuilding();
-            var market = _buildingFactory.CreateMarket();
-            StartGame();
-        }
+            _buildingsViewRepository.Add(processingBuilding);
+            processingBuilding.OnBuildingClicked += _processingBuildingController.ShowProcessingBuildingWindow;
 
-        private void StartGame()
-        {
+            var market = _buildingFactory.CreateMarket();
         }
     }
 }

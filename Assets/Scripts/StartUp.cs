@@ -13,20 +13,25 @@ namespace ProductionGame
     public class StartUp : MonoBehaviour
     {
         private readonly List<IDisposable> _disposables = new();
-        [SerializeField] private BuildingSettings _buildingSettings;
+        [SerializeField] private GameSettings _gameSettings;
         [SerializeField] private MainMenuView _mainMenuView;
+        [SerializeField] private ProcessingBuildingMenuView _processingBuildingMenuView;
         [SerializeField] private ResourceBuildingMenuView _resourceBuildingMenuView;
         [SerializeField] private StorageView _storageView;
 
         private void Start()
         {
             var gameContext = new GameContext();
-            var resourceBuildingController = new ResourceBuildingController(_resourceBuildingMenuView);
-            var storageController = new StorageController(new StorageModel(), _storageView);
-            var buildingFactory = new BuildingFactory(_buildingSettings, storageController, _disposables);
+
+            var storageModel = new StorageModel();
+            var processingBuildingController =
+                new ProcessingBuildingController(_processingBuildingMenuView, storageModel);
+            var storageController = new StorageController(storageModel, _storageView);
+            var buildingFactory = new BuildingFactory(_gameSettings, storageController, _disposables);
             var buildingsViewRepository = new BuildingsViewRepository();
+            var resourceBuildingController = new ResourceBuildingController(_resourceBuildingMenuView);
             var gamePlayController = new GamePlayController(gameContext, buildingFactory, resourceBuildingController,
-                buildingsViewRepository);
+                buildingsViewRepository, processingBuildingController);
             var mainMenuController = new MainMenuController(gameContext, _mainMenuView, gamePlayController);
 
             mainMenuController.ShowMainMenuView();
@@ -35,6 +40,7 @@ namespace ProductionGame
             _disposables.Add(buildingsViewRepository);
             _disposables.Add(_mainMenuView);
             _disposables.Add(_resourceBuildingMenuView);
+            _disposables.Add(_processingBuildingMenuView);
         }
 
         private void OnDestroy()

@@ -1,28 +1,27 @@
 using System;
 using ProductionGame.Models;
-using UnityEngine;
 
 namespace ProductionGame.GameView
 {
-    public class ResourceBuildingView : MonoBehaviour, IBuildingView<ResourceBuildingModel>
+    public class ResourceBuildingView : BuildingView, IBuildingView<ResourceBuildingModel>
     {
+        private ResourceBuildingModel _resourceBuilding;
         public event Action<ResourceBuildingModel> OnBuildingClicked;
 
-        private ResourceBuildingModel _resourceBuilding;
-
-        public void Initialize(ResourceBuildingModel resourceBuilding)
+        public void Initialize(ResourceBuildingModel model)
         {
-            _resourceBuilding = resourceBuilding;
+            _resourceBuilding = model;
         }
 
-        private void OnMouseDown()
-        {
-            OnBuildingClicked?.Invoke(_resourceBuilding);
-        }
-
-        public void Dispose()
+        public override void Dispose()
         {
             OnBuildingClicked = null;
+        }
+
+
+        protected override void Click()
+        {
+            OnBuildingClicked?.Invoke(_resourceBuilding);
         }
     }
 }

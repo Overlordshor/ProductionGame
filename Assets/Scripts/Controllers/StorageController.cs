@@ -5,7 +5,9 @@ namespace ProductionGame.Controllers
 {
     public interface IStorageController
     {
-        void AddResource(ResourceType resourceType);
+        void Add(ResourceType resourceType);
+
+        void Add(ProductType productType);
     }
 
     public class StorageController : IStorageController
@@ -19,10 +21,16 @@ namespace ProductionGame.Controllers
             _storageView = storageView;
         }
 
-        public void AddResource(ResourceType resourceType)
+        public void Add(ResourceType resourceType)
         {
-            _storageModel.AddResource(resourceType, 1);
-            _storageView.UpdateResourceCount(resourceType, _storageModel.GetResourceCount(resourceType));
+            _storageModel.Add(resourceType, 1);
+            _storageView.UpdateCount(resourceType, _storageModel.GetCount(resourceType));
+        }
+
+        public void Add(ProductType productType)
+        {
+            _storageModel.Add(productType, 1);
+            _storageView.UpdateCount(productType, _storageModel.GetCount(productType));
         }
     }
 }

@@ -12,12 +12,12 @@ namespace ProductionGame.Repositories
 
     public class BuildingsViewRepository : IBuildingsViewRepository, IDisposable
     {
-        private List<ResourceBuildingView> _resourceBuildings = new();
+        private List<BuildingView> _resourceBuildings = new();
 
         public void Add<T>(IBuildingView<T> building)
         {
             if (typeof(T) == typeof(ResourceBuildingModel))
-                _resourceBuildings.Add(building as ResourceBuildingView);
+                _resourceBuildings.Add(building as BuildingView);
         }
 
         public void Dispose()
