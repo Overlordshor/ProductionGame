@@ -4,10 +4,12 @@ using UnityEngine.UI;
 
 namespace ProductionGame.UI
 {
-    public interface IMainMenuView : IView, IDisposable
+    public interface IMainMenuView : IDisposable
     {
         event Action<int> OnBuildCountSelected;
         event Action OnStartGameClicked;
+
+        void Show();
     }
 
     public class MainMenuView : MonoBehaviour, IMainMenuView

@@ -9,10 +9,10 @@ namespace ProductionGame
 {
     public class StartUp : MonoBehaviour
     {
-        [SerializeField] private MainMenuView _mainMenuView;
         [SerializeField] private BuildingPrefabs _buildingPrefabs;
 
         private MainMenuController _mainMenuController;
+        [SerializeField] private MainMenuView _mainMenuView;
 
         private void Start()
         {

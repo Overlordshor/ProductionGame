@@ -1,3 +1,4 @@
+using ProductionGame.GameView;
 using ProductionGame.SO;
 using UnityEngine;
 
@@ -5,7 +6,7 @@ namespace ProductionGame.Factories
 {
     public interface IBuildingFactory
     {
-        GameObject CreateResourceBuilding();
+        IResourceBuildingView CreateResourceBuilding(int index);
         GameObject CreateProcessingBuilding();
         GameObject CreateMarket();
     }
@@ -19,19 +20,21 @@ namespace ProductionGame.Factories
             _buildingPrefabs = buildingPrefabs;
         }
 
-        public GameObject CreateResourceBuilding()
+        public IResourceBuildingView CreateResourceBuilding(int index)
         {
-            return InstantiatePrefab(_buildingPrefabs.ResourceBuildingPrefab);
+            var position = _buildingPrefabs.ResourceBuildingPositions[index];
+            return InstantiatePrefab(_buildingPrefabs.ResourceBuildingMenuPrefab, position);
         }
 
         public GameObject CreateProcessingBuilding()
         {
-            return InstantiatePrefab(_buildingPrefabs.ProcessingBuildingPrefab);
+            return InstantiatePrefab(_buildingPrefabs.ProcessingBuildingPrefab,
+                _buildingPrefabs.ProcessingBuildingPosition);
         }
 
         public GameObject CreateMarket()
         {
-            return InstantiatePrefab(_buildingPrefabs.MarketPrefab);
+            return InstantiatePrefab(_buildingPrefabs.MarketPrefab, _buildingPrefabs.MarketPosition);
         }
     }
 }

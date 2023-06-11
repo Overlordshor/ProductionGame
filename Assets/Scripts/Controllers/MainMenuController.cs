@@ -8,12 +8,15 @@ namespace ProductionGame.Controllers
     {
         private readonly GameContext _gameContext;
         private readonly IMainMenuView _mainMenuView;
+        private readonly IGamePlayController _gamePlayController;
 
         public MainMenuController(GameContext gameContext,
-            IMainMenuView mainMenuView, GamePlayController gamePlayController)
+            IMainMenuView mainMenuView,
+            IGamePlayController gamePlayController)
         {
             _gameContext = gameContext;
             _mainMenuView = mainMenuView;
+            _gamePlayController = gamePlayController;
             _mainMenuView.OnStartGameClicked += StartGame;
             _mainMenuView.OnBuildCountSelected += SelectBuildCount;
         }
@@ -38,6 +41,7 @@ namespace ProductionGame.Controllers
 
         private void StartGame()
         {
+            _gamePlayController.CreateGame();
         }
     }
 }

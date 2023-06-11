@@ -1,12 +1,17 @@
+using System;
+
 namespace ProductionGame.Models
 {
     public class GameContext
     {
-        public int BuildingCount { get; private set; }
+        public int ResourceBuildingCount { get; private set; }
 
         public void SelectBuildingCount(int buildingCount)
         {
-            BuildingCount = buildingCount;
+            if (buildingCount <= 0)
+                throw new ArgumentOutOfRangeException();
+
+            ResourceBuildingCount = buildingCount;
         }
     }
 }
