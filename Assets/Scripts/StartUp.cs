@@ -9,7 +9,7 @@ namespace ProductionGame
 {
     public class StartUp : MonoBehaviour
     {
-        [SerializeField] private BuildingPrefabs _buildingPrefabs;
+        [SerializeField] private BuildingSettings _buildingSettings;
 
         private MainMenuController _mainMenuController;
         [SerializeField] private MainMenuView _mainMenuView;
@@ -17,7 +17,7 @@ namespace ProductionGame
         private void Start()
         {
             var gameContext = new GameContext();
-            var buildingFactory = new BuildingFactory(_buildingPrefabs);
+            var buildingFactory = new BuildingFactory(_buildingSettings);
             var gamePlayController = new GamePlayController(gameContext, buildingFactory);
             _mainMenuController = new MainMenuController(gameContext, _mainMenuView, gamePlayController);
             _mainMenuController.ShowMainMenuView();

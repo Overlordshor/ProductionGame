@@ -7,8 +7,8 @@ namespace ProductionGame.Controllers
     public class MainMenuController : IDisposable
     {
         private readonly GameContext _gameContext;
-        private readonly IMainMenuView _mainMenuView;
         private readonly IGamePlayController _gamePlayController;
+        private readonly IMainMenuView _mainMenuView;
 
         public MainMenuController(GameContext gameContext,
             IMainMenuView mainMenuView,
@@ -21,17 +21,17 @@ namespace ProductionGame.Controllers
             _mainMenuView.OnBuildCountSelected += SelectBuildCount;
         }
 
-
-        public void ShowMainMenuView()
-        {
-            _mainMenuView.Show();
-        }
-
         public void Dispose()
         {
             _mainMenuView.OnBuildCountSelected -= SelectBuildCount;
             _mainMenuView.OnStartGameClicked -= StartGame;
             _mainMenuView.Dispose();
+        }
+
+
+        public void ShowMainMenuView()
+        {
+            _mainMenuView.Show();
         }
 
         private void SelectBuildCount(int buildCount)

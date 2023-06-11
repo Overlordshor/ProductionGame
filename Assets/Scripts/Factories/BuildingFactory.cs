@@ -1,4 +1,5 @@
 using ProductionGame.GameView;
+using ProductionGame.Models;
 using ProductionGame.SO;
 using UnityEngine;
 
@@ -13,28 +14,32 @@ namespace ProductionGame.Factories
 
     public class BuildingFactory : ViewFactory, IBuildingFactory
     {
-        private readonly BuildingPrefabs _buildingPrefabs;
+        private readonly BuildingSettings _buildingSettings;
 
-        public BuildingFactory(BuildingPrefabs buildingPrefabs)
+        public BuildingFactory(BuildingSettings buildingSettings)
         {
-            _buildingPrefabs = buildingPrefabs;
+            _buildingSettings = buildingSettings;
         }
 
         public IResourceBuildingView CreateResourceBuilding(int index)
         {
-            var position = _buildingPrefabs.ResourceBuildingPositions[index];
-            return InstantiatePrefab(_buildingPrefabs.ResourceBuildingMenuPrefab, position);
+            var position = _buildingSettings.ResourceBuildingPositions[index];
+            var view = InstantiatePrefab(_buildingSettings.ResourceBuildingMenuPrefab, position);
+
+            var resourceBuildingModel = new ResourceBuildingModel();
+            view.Initialize();
+            return view;
         }
 
         public GameObject CreateProcessingBuilding()
         {
-            return InstantiatePrefab(_buildingPrefabs.ProcessingBuildingPrefab,
-                _buildingPrefabs.ProcessingBuildingPosition);
+            return InstantiatePrefab(_buildingSettings.ProcessingBuildingPrefab,
+                _buildingSettings.ProcessingBuildingPosition);
         }
 
         public GameObject CreateMarket()
         {
-            return InstantiatePrefab(_buildingPrefabs.MarketPrefab, _buildingPrefabs.MarketPosition);
+            return InstantiatePrefab(_buildingSettings.MarketPrefab, _buildingSettings.MarketPosition);
         }
     }
 }

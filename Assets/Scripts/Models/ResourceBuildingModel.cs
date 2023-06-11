@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace ProductionGame.Models
@@ -7,13 +8,10 @@ namespace ProductionGame.Models
         private float _productionInterval;
         private float _timer;
         private int _currentResourceIndex;
-
-        public ResourceType[] AvailableResources { get; }
         public bool IsProductionActive { get; private set; }
 
-        public ResourceBuildingModel(ResourceType[] availableResources, float productionInterval)
+        public ResourceBuildingModel(float productionInterval)
         {
-            AvailableResources = availableResources;
             _productionInterval = productionInterval;
             _timer = 0f;
             _currentResourceIndex = 0;
@@ -46,12 +44,13 @@ namespace ProductionGame.Models
 
         private void ProduceResource()
         {
-            var resourceType = AvailableResources[_currentResourceIndex];
+            var resourceType = (ResourceType)_currentResourceIndex;
             //TODO: storage
 
+            if (resourceType == ResourceType.None)
+                throw new InvalidCastException();
+
             _currentResourceIndex++;
-            if (_currentResourceIndex >= AvailableResources.Length)
-                _currentResourceIndex = 0;
         }
     }
 }
