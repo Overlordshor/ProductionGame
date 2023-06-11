@@ -7,9 +7,9 @@ namespace ProductionGame.SO
         menuName = "ProductionGame/Resource Building Settings", order = 2)]
     public class ResourceBuildingSettings : ScriptableObject
     {
+        [SerializeField] private float _productionInterval;
         [SerializeField] private ResourceBuildingView _resourceBuildingMenuPrefab;
         [SerializeField] private Vector3[] _resourceBuildingPositions;
-        [SerializeField] private float _productionInterval;
 
         public float ProductionInterval => _productionInterval;
         public ResourceBuildingView ResourceBuildingMenuPrefab => _resourceBuildingMenuPrefab;

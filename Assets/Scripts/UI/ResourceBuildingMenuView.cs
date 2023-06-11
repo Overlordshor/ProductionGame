@@ -36,9 +36,8 @@ namespace ProductionGame.UI
         {
             ClearInventory();
 
-            for (var i = 0; i < resourceBuilding.AvailableResources.Length; i++)
+            foreach (ResourceType resource in Enum.GetValues(typeof(ResourceType)))
             {
-                var resource = resourceBuilding.AvailableResources[i];
                 var cellObject = Instantiate(_cellPrefab, _cellsContainer);
                 var cellButton = cellObject.GetComponent<Button>();
                 var cellText = cellObject.GetComponentInChildren<Text>();
@@ -46,6 +45,7 @@ namespace ProductionGame.UI
 
                 cellButton.onClick.AddListener(() => OnCellClicked?.Invoke(resourceBuilding));
             }
+
 
             _startButton.onClick.AddListener(() => OnStartClicked?.Invoke(resourceBuilding));
             _stopButton.onClick.AddListener(() => OnStopClicked?.Invoke(resourceBuilding));

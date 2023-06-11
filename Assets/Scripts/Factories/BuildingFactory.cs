@@ -7,7 +7,7 @@ namespace ProductionGame.Factories
 {
     public interface IBuildingFactory
     {
-        IResourceBuildingView CreateResourceBuilding(int index);
+        IBuildingView<ResourceBuildingModel> CreateResourceBuilding(int index);
         GameObject CreateProcessingBuilding();
         GameObject CreateMarket();
     }
@@ -21,13 +21,13 @@ namespace ProductionGame.Factories
             _buildingSettings = buildingSettings;
         }
 
-        public IResourceBuildingView CreateResourceBuilding(int index)
+        public IBuildingView<ResourceBuildingModel> CreateResourceBuilding(int index)
         {
-            var position = _buildingSettings.ResourceBuildingPositions[index];
-            var view = InstantiatePrefab(_buildingSettings.ResourceBuildingMenuPrefab, position);
-
-            var resourceBuildingModel = new ResourceBuildingModel();
-            view.Initialize();
+            var resourceBuildingSettings = _buildingSettings.ResourceBuildingSettings;
+            var position = resourceBuildingSettings.ResourceBuildingPositions[index];
+            var view = InstantiatePrefab(resourceBuildingSettings.ResourceBuildingMenuPrefab, position);
+            var resourceBuildingModel = new ResourceBuildingModel(resourceBuildingSettings.ProductionInterval);
+            view.Initialize(resourceBuildingModel);
             return view;
         }
 

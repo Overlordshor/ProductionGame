@@ -25,7 +25,6 @@ namespace ProductionGame.Controllers
         {
             _mainMenuView.OnBuildCountSelected -= SelectBuildCount;
             _mainMenuView.OnStartGameClicked -= StartGame;
-            _mainMenuView.Dispose();
         }
 
 

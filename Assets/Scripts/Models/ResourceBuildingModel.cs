@@ -5,9 +5,10 @@ namespace ProductionGame.Models
 {
     public class ResourceBuildingModel
     {
+        private int _currentResourceIndex;
         private float _productionInterval;
         private float _timer;
-        private int _currentResourceIndex;
+
         public bool IsProductionActive { get; private set; }
 
         public ResourceBuildingModel(float productionInterval)

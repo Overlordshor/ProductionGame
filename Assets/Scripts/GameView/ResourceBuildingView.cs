@@ -4,14 +4,7 @@ using UnityEngine;
 
 namespace ProductionGame.GameView
 {
-    public interface IResourceBuildingView : IDisposable
-    {
-        void Initialize(ResourceBuildingModel resourceBuilding);
-
-        event Action<ResourceBuildingModel> OnBuildingClicked;
-    }
-
-    public class ResourceBuildingView : MonoBehaviour, IResourceBuildingView
+    public class ResourceBuildingView : MonoBehaviour, IBuildingView<ResourceBuildingModel>
     {
         public event Action<ResourceBuildingModel> OnBuildingClicked;
 
