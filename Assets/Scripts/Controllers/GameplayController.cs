@@ -12,9 +12,9 @@ namespace ProductionGame.Controllers
     public class GamePlayController : IGamePlayController
     {
         private readonly IBuildingFactory _buildingFactory;
+        private readonly IBuildingsViewRepository _buildingsViewRepository;
         private readonly GameContext _gameContext;
         private readonly IResourceBuildingController _resourceBuildingController;
-        private readonly IBuildingsViewRepository _buildingsViewRepository;
 
 
         public GamePlayController(GameContext gameContext,

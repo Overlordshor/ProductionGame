@@ -22,15 +22,15 @@ namespace ProductionGame.UI
         public event Action<ResourceBuildingModel> OnStartClicked;
         public event Action<ResourceBuildingModel> OnStopClicked;
 
-        [SerializeField] private GameObject _cellPrefab;
+        [SerializeField] private CellObjectView _cellPrefab;
         [SerializeField] private Transform _cellsContainer;
+        [SerializeField] private GameObject _inventoryItemPrefab;
+        [SerializeField] private Transform _inventoryPanel;
         [SerializeField] private Button _startButton;
         [SerializeField] private Button _stopButton;
-        [SerializeField] private Transform _inventoryPanel;
-        [SerializeField] private GameObject _inventoryItemPrefab;
+
 
         private List<GameObject> _inventoryItems;
-
 
         public void Show(ResourceBuildingModel resourceBuilding)
         {
@@ -39,11 +39,8 @@ namespace ProductionGame.UI
             foreach (ResourceType resource in Enum.GetValues(typeof(ResourceType)))
             {
                 var cellObject = Instantiate(_cellPrefab, _cellsContainer);
-                var cellButton = cellObject.GetComponent<Button>();
-                var cellText = cellObject.GetComponentInChildren<Text>();
-                cellText.text = resource.ToString();
-
-                cellButton.onClick.AddListener(() => OnCellClicked?.Invoke(resourceBuilding));
+                cellObject.SetText(resource.ToString());
+                cellObject.Subscribe(() => OnCellClicked?.Invoke(resourceBuilding));
             }
 
 
@@ -57,6 +54,13 @@ namespace ProductionGame.UI
         {
             _startButton.gameObject.SetActive(active);
             _stopButton.gameObject.SetActive(!active);
+        }
+
+        public void Dispose()
+        {
+            OnCellClicked = null;
+            OnStartClicked = null;
+            OnStopClicked = null;
         }
 
         private void ClearInventory()
@@ -74,13 +78,6 @@ namespace ProductionGame.UI
         {
             _startButton.onClick.RemoveAllListeners();
             _stopButton.onClick.RemoveAllListeners();
-        }
-
-        public void Dispose()
-        {
-            OnCellClicked = null;
-            OnStartClicked = null;
-            OnStopClicked = null;
         }
     }
 }
