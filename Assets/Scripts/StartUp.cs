@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
 using ProductionGame.Controllers;
 using ProductionGame.Factories;
+using ProductionGame.Infrasturcture;
 using ProductionGame.Models;
 using ProductionGame.Repositories;
 using ProductionGame.SO;
@@ -12,26 +11,30 @@ namespace ProductionGame
 {
     public class StartUp : MonoBehaviour
     {
-        private readonly List<IDisposable> _disposables = new();
         [SerializeField] private GameSettings _gameSettings;
         [SerializeField] private MainMenuView _mainMenuView;
+        [SerializeField] private MarketView _marketView;
         [SerializeField] private ProcessingBuildingMenuView _processingBuildingMenuView;
         [SerializeField] private ResourceBuildingMenuView _resourceBuildingMenuView;
         [SerializeField] private StorageView _storageView;
 
+        private readonly Disposables _disposables = new();
+
         private void Start()
         {
-            var gameContext = new GameContext();
-
             var storageModel = new StorageModel();
+            var playerModel = new PlayerModel();
+            var marketController = new MarketController(_marketView, playerModel, _gameSettings.ProductsInfo);
             var processingBuildingController =
                 new ProcessingBuildingController(_processingBuildingMenuView, storageModel);
             var storageController = new StorageController(storageModel, _storageView);
-            var buildingFactory = new BuildingFactory(_gameSettings, storageController, _disposables);
+            var buildingFactory = new BuildingFactory(_gameSettings, storageController, _disposables, storageModel);
             var buildingsViewRepository = new BuildingsViewRepository();
             var resourceBuildingController = new ResourceBuildingController(_resourceBuildingMenuView);
+
+            var gameContext = new GameContext();
             var gamePlayController = new GamePlayController(gameContext, buildingFactory, resourceBuildingController,
-                buildingsViewRepository, processingBuildingController);
+                buildingsViewRepository, processingBuildingController, marketController);
             var mainMenuController = new MainMenuController(gameContext, _mainMenuView, gamePlayController);
 
             mainMenuController.ShowMainMenuView();
@@ -41,12 +44,13 @@ namespace ProductionGame
             _disposables.Add(_mainMenuView);
             _disposables.Add(_resourceBuildingMenuView);
             _disposables.Add(_processingBuildingMenuView);
+            _disposables.Add(_marketView);
+            _disposables.Add(marketController);
         }
 
         private void OnDestroy()
         {
-            _disposables.ForEach(disposable => disposable.Dispose());
-            _disposables.Clear();
+            _disposables.Dispose();
         }
     }
 }

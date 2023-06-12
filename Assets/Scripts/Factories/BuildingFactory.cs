@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
 using ProductionGame.Controllers;
 using ProductionGame.GameView;
+using ProductionGame.Infrasturcture;
 using ProductionGame.Models;
 using ProductionGame.SO;
-using UnityEngine;
 
 namespace ProductionGame.Factories
 {
@@ -12,22 +10,25 @@ namespace ProductionGame.Factories
     {
         IBuildingView<ResourceBuildingModel> CreateResourceBuilding(int index);
         IBuildingView<ProcessingBuildingModel> CreateProcessingBuilding();
-        GameObject CreateMarket();
+        IBuildingView<StorageModel> CreateMarket();
     }
 
     public class BuildingFactory : ViewFactory, IBuildingFactory
     {
-        private readonly List<IDisposable> _disposables;
+        private readonly IDisposables _disposables;
+        private readonly StorageModel _storageModel;
         private readonly GameSettings _gameSettings;
         private readonly IStorageController _storageController;
 
         public BuildingFactory(GameSettings gameSettings,
             IStorageController storageController,
-            List<IDisposable> disposables)
+            IDisposables disposables,
+            StorageModel storageModel)
         {
             _gameSettings = gameSettings;
             _storageController = storageController;
             _disposables = disposables;
+            _storageModel = storageModel;
         }
 
         public IBuildingView<ResourceBuildingModel> CreateResourceBuilding(int index)
@@ -76,10 +77,15 @@ namespace ProductionGame.Factories
             }
         }
 
-        public GameObject CreateMarket()
+        public IBuildingView<StorageModel> CreateMarket()
         {
-            return null;
-            //return InstantiateBuildingView(_gameSettings.MarketPrefab, _gameSettings.MarketPosition);
+            var marketBuildingSettings = _gameSettings.MarketBuildingSettings;
+            var position = marketBuildingSettings.BuildingPosition;
+            var view = InstantiateBuildingView<StorageModel>(marketBuildingSettings.BuildingPrefab, position);
+
+            _disposables.Add(view);
+            view.Initialize(_storageModel);
+            return view;
         }
     }
 }

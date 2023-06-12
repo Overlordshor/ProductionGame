@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProductionGame.Models
 {
@@ -10,6 +11,7 @@ namespace ProductionGame.Models
         public StorageModel()
         {
             _resourceCounts = new Dictionary<ResourceType, int>();
+            _productCounts = new Dictionary<ProductType, int>();
         }
 
         public void Add(ResourceType resourceType, int count)
@@ -40,6 +42,26 @@ namespace ProductionGame.Models
             return _productCounts.ContainsKey(productType)
                 ? _productCounts[productType]
                 : 0;
+        }
+
+        public void Remove(ProductType productType)
+        {
+            if (_productCounts.ContainsKey(productType))
+                _productCounts[productType]--;
+        }
+
+        public void Remove(ResourceType resourceType)
+        {
+            if (_resourceCounts.ContainsKey(resourceType))
+                _resourceCounts[resourceType]--;
+        }
+
+        public ProductType[] GetAvailableProducts()
+        {
+            return _productCounts
+                .Where(product => product.Value > 0)
+                .Select(product => product.Key)
+                .ToArray();
         }
     }
 }

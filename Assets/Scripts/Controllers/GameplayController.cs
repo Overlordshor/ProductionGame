@@ -1,6 +1,7 @@
 using ProductionGame.Factories;
 using ProductionGame.Models;
 using ProductionGame.Repositories;
+using ProductionGame.UI;
 
 namespace ProductionGame.Controllers
 {
@@ -15,6 +16,7 @@ namespace ProductionGame.Controllers
         private readonly IBuildingsViewRepository _buildingsViewRepository;
         private readonly GameContext _gameContext;
         private readonly IProcessingBuildingController _processingBuildingController;
+        private readonly IMarketController _marketController;
         private readonly IResourceBuildingController _resourceBuildingController;
 
 
@@ -22,13 +24,15 @@ namespace ProductionGame.Controllers
             IBuildingFactory buildingFactory,
             IResourceBuildingController resourceBuildingController,
             IBuildingsViewRepository buildingsViewRepository,
-            IProcessingBuildingController processingBuildingController)
+            IProcessingBuildingController processingBuildingController,
+            IMarketController marketController)
         {
             _gameContext = gameContext;
             _buildingFactory = buildingFactory;
             _resourceBuildingController = resourceBuildingController;
             _buildingsViewRepository = buildingsViewRepository;
             _processingBuildingController = processingBuildingController;
+            _marketController = marketController;
         }
 
         public void CreateGame()
@@ -46,6 +50,8 @@ namespace ProductionGame.Controllers
             processingBuilding.OnBuildingClicked += _processingBuildingController.ShowProcessingBuildingWindow;
 
             var market = _buildingFactory.CreateMarket();
+            _buildingsViewRepository.Add(market);
+            market.OnBuildingClicked += _marketController.ShowMarket;
         }
     }
 }
