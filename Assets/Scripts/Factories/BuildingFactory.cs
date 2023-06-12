@@ -1,6 +1,6 @@
 using ProductionGame.Controllers;
 using ProductionGame.GameView;
-using ProductionGame.Infrasturcture;
+using ProductionGame.Infrastructure;
 using ProductionGame.Models;
 using ProductionGame.SO;
 
@@ -60,7 +60,9 @@ namespace ProductionGame.Factories
             var position = processingBuildingSettings.BuildingPosition;
             var view = InstantiateBuildingView<ProcessingBuildingModel>(processingBuildingSettings.BuildingPrefab,
                 position);
-            var processingBuildingModel = new ProcessingBuildingModel(processingBuildingSettings.ProductionInterval);
+            var processingBuildingModel =
+                new ProcessingBuildingModel(processingBuildingSettings.ProductionInterval, _storageModel);
+            processingBuildingModel.OnResourcesConsumed += _storageController.Remove;
             processingBuildingModel.OnProductProduced += _storageController.Add;
             processingBuildingModel.OnDisposed += UnsubscribeAll;
 
@@ -72,6 +74,7 @@ namespace ProductionGame.Factories
 
             void UnsubscribeAll()
             {
+                processingBuildingModel.OnResourcesConsumed -= _storageController.Remove;
                 processingBuildingModel.OnProductProduced -= _storageController.Add;
                 processingBuildingModel.OnDisposed -= UnsubscribeAll;
             }

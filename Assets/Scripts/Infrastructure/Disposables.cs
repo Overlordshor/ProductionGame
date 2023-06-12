@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ProductionGame.Infrasturcture
+namespace ProductionGame.Infrastructure
 {
     public interface IDisposables
     {

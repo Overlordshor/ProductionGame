@@ -5,22 +5,23 @@ namespace ProductionGame.Models
 {
     public class ProcessingBuildingModel : IDisposable
     {
+        public event Action<ResourceType> OnResourcesConsumed;
         public event Action<ProductType> OnProductProduced;
         public event Action OnDisposed;
 
         private ProductType _currentProductType;
         private float _productionInterval;
-
-
-        public ProcessingBuildingModel(float productionInterval)
-        {
-            _productionInterval = productionInterval;
-        }
+        private readonly StorageModel _storageModel;
 
         public bool IsProductionActive { get; private set; }
         public ResourceType ResourceType1 { get; private set; }
-
         public ResourceType ResourceType2 { get; private set; }
+
+        public ProcessingBuildingModel(float productionInterval, StorageModel storageModel)
+        {
+            _productionInterval = productionInterval;
+            _storageModel = storageModel;
+        }
 
         public void SetResourceTypes(ResourceType resourceType1, ResourceType resourceType2)
         {
@@ -37,21 +38,27 @@ namespace ProductionGame.Models
             IsProductionActive = true;
 
             await ProduceProductsAsync();
+            StopProduction();
         }
 
         public void StopProduction()
         {
-            IsProductionActive = false;
+            IsProductionActive = _storageModel.HasResource(ResourceType1, ResourceType2);
         }
 
         private async Task ProduceProductsAsync()
         {
-            while (IsProductionActive)
+            while (IsProductionActive
+                   && !_storageModel.HasResource(ResourceType1, ResourceType2))
             {
                 await Task.Delay(TimeSpan.FromSeconds(_productionInterval));
+
+                OnResourcesConsumed?.Invoke(ResourceType1);
+                OnResourcesConsumed?.Invoke(ResourceType2);
                 OnProductProduced?.Invoke(_currentProductType);
             }
         }
+
 
         private void CalculateProductType()
         {
@@ -64,11 +71,12 @@ namespace ProductionGame.Models
             };
         }
 
-
         public void Dispose()
         {
+            OnResourcesConsumed = null;
             OnProductProduced = null;
             OnDisposed?.Invoke();
+            OnDisposed = null;
         }
     }
 }

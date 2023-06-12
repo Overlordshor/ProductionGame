@@ -63,5 +63,11 @@ namespace ProductionGame.Models
                 .Select(product => product.Key)
                 .ToArray();
         }
+
+        public bool HasResource(ResourceType resourceType1, ResourceType resourceType2)
+        {
+            return GetCount(resourceType1) > 0
+                   && GetCount(resourceType2) > 0;
+        }
     }
 }
