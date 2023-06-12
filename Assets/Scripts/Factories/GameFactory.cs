@@ -1,16 +1,16 @@
-using ProductionGame.Factories;
+using ProductionGame.Controllers;
 using ProductionGame.Models;
 using ProductionGame.Repositories;
 using ProductionGame.UI;
 
-namespace ProductionGame.Controllers
+namespace ProductionGame.Factories
 {
-    public interface IGamePlayController
+    public interface IGameFactory
     {
-        void CreateGame();
+        void Create();
     }
 
-    public class GamePlayController : IGamePlayController
+    public class GameFactory : IGameFactory
     {
         private readonly IBuildingFactory _buildingFactory;
         private readonly IBuildingsViewRepository _buildingsViewRepository;
@@ -20,7 +20,7 @@ namespace ProductionGame.Controllers
         private readonly IResourceBuildingController _resourceBuildingController;
 
 
-        public GamePlayController(GameContext gameContext,
+        public GameFactory(GameContext gameContext,
             IBuildingFactory buildingFactory,
             IResourceBuildingController resourceBuildingController,
             IBuildingsViewRepository buildingsViewRepository,
@@ -35,7 +35,7 @@ namespace ProductionGame.Controllers
             _marketController = marketController;
         }
 
-        public void CreateGame()
+        public void Create()
         {
             var resourceBuildingCount = _gameContext.ResourceBuildingCount;
             for (var i = 0; i < resourceBuildingCount; i++)

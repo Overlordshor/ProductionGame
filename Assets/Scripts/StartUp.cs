@@ -17,6 +17,7 @@ namespace ProductionGame
         [SerializeField] private ProcessingBuildingMenuView _processingBuildingMenuView;
         [SerializeField] private ResourceBuildingMenuView _resourceBuildingMenuView;
         [SerializeField] private StorageView _storageView;
+        [SerializeField] private VictoryWindowView _victoryWindowView;
 
         private readonly Disposables _disposables = new();
 
@@ -32,10 +33,11 @@ namespace ProductionGame
             var buildingsViewRepository = new BuildingsViewRepository();
             var resourceBuildingController = new ResourceBuildingController(_resourceBuildingMenuView);
 
-            var gameContext = new GameContext();
-            var gamePlayController = new GamePlayController(gameContext, buildingFactory, resourceBuildingController,
+            var gameContext = new GameContext(playerModel, _gameSettings);
+            var gameFactory = new GameFactory(gameContext, buildingFactory, resourceBuildingController,
                 buildingsViewRepository, processingBuildingController, marketController);
-            var mainMenuController = new MainMenuController(gameContext, _mainMenuView, gamePlayController);
+            var mainMenuController =
+                new MainMenuController(gameContext, _mainMenuView, _victoryWindowView, gameFactory);
 
             mainMenuController.ShowMainMenuView();
 

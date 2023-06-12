@@ -1,28 +1,33 @@
 using System;
 using System.Collections.Generic;
 using ProductionGame.GameView;
-using ProductionGame.Models;
 
 namespace ProductionGame.Repositories
 {
     public interface IBuildingsViewRepository
     {
         void Add<T>(IBuildingView<T> building);
+
+        IReadOnlyCollection<BuildingView> GetAll();
     }
 
     public class BuildingsViewRepository : IBuildingsViewRepository, IDisposable
     {
-        private List<BuildingView> _resourceBuildings = new();
+        private List<BuildingView> _buildings = new();
 
         public void Add<T>(IBuildingView<T> building)
         {
-            if (typeof(T) == typeof(ResourceBuildingModel))
-                _resourceBuildings.Add(building as BuildingView);
+            _buildings.Add(building as BuildingView);
+        }
+
+        public IReadOnlyCollection<BuildingView> GetAll()
+        {
+            throw new NotImplementedException();
         }
 
         public void Dispose()
         {
-            _resourceBuildings.ForEach(buildingView => buildingView.Dispose());
+            _buildings.ForEach(buildingView => buildingView.Dispose());
         }
     }
 }
