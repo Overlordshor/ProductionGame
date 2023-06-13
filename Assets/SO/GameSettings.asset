@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2594715c2f448449895b7540bc31507, type: 3}
+  m_Name: GameSettings
+  m_EditorClassIdentifier: 
+  _marketBuildingSettings: {fileID: 11400000, guid: 1ded8bda9f90f1947b9220f8f4739a6f, type: 2}
+  _processingBuildingSettings: {fileID: 11400000, guid: db595ad319e4df845bff9bf5f6ff978c, type: 2}
+  _resourceBuildingSettings:
+  - {fileID: 11400000, guid: 5a9af5c196a39f848af9a732eb9825b6, type: 2}
+  - {fileID: 11400000, guid: 0ab417e7df1e0bb40951d6cc0076e879, type: 2}
+  - {fileID: 11400000, guid: 44906fe43f90a4d40adc606ebdbd46bc, type: 2}
+  _productsInfo:
+  - {fileID: 11400000, guid: d9d7b74e72aa7d14ea98856e6b87127b, type: 2}
+  - {fileID: 11400000, guid: 81404fad572413f40823033de5185329, type: 2}
+  - {fileID: 11400000, guid: b0e73067bca7b36459a13effdf266b1d, type: 2}
+  _coinsToWin: 30
