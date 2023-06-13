@@ -9,13 +9,13 @@ namespace ProductionGame.Models
         public event Action<ResourceType> OnProductProduced;
         public event Action OnDisposed;
 
-        private ResourceType _currentResourceType;
         private float _productionInterval;
         private readonly StorageModel _storageModel;
+        private Craft _craft;
 
         public bool IsProductionActive { get; private set; }
-        public ResourceType ResourceType1 { get; private set; }
-        public ResourceType ResourceType2 { get; private set; }
+        public ResourceType ResourceType1 => _craft?.Resources[0] ?? ResourceType.None;
+        public ResourceType ResourceType2 => _craft?.Resources[0] ?? ResourceType.None;
 
         public ProcessingBuildingModel(float productionInterval, StorageModel storageModel)
         {
@@ -25,14 +25,12 @@ namespace ProductionGame.Models
 
         public void SetResourceTypes(ResourceType resourceType1, ResourceType resourceType2)
         {
-            ResourceType1 = resourceType1;
-            ResourceType2 = resourceType2;
-            CalculateResourceType();
+            _craft = new Craft(new[] { resourceType1, resourceType2 });
         }
 
         public async Task StartProductionAsync()
         {
-            if (IsProductionActive || _currentResourceType == ResourceType.None)
+            if (IsProductionActive || _craft.Product == ResourceType.None)
                 return;
 
             IsProductionActive = true;
@@ -43,33 +41,22 @@ namespace ProductionGame.Models
 
         public void StopProduction()
         {
-            IsProductionActive = _storageModel.HasResource(ResourceType1, ResourceType2);
+            IsProductionActive = _storageModel.HasResource(_craft.Resources);
         }
 
         private async Task ProduceProductsAsync()
         {
             while (IsProductionActive
-                   && !_storageModel.HasResource(ResourceType1, ResourceType2))
+                   && !_storageModel.HasResource(_craft.Resources))
             {
                 await Task.Delay(TimeSpan.FromSeconds(_productionInterval));
 
                 OnResourcesConsumed?.Invoke(ResourceType1);
                 OnResourcesConsumed?.Invoke(ResourceType2);
-                OnProductProduced?.Invoke(_currentResourceType);
+                OnProductProduced?.Invoke(_craft.Product);
             }
         }
 
-
-        private void CalculateResourceType()
-        {
-            _currentResourceType = ResourceType1 switch
-            {
-                ResourceType.Wood when ResourceType2 == ResourceType.Stone => ResourceType.Hammers,
-                ResourceType.Wood when ResourceType2 == ResourceType.Iron => ResourceType.Forks,
-                ResourceType.Stone when ResourceType2 == ResourceType.Iron => ResourceType.Drills,
-                _ => ResourceType.None
-            };
-        }
 
         public void Dispose()
         {

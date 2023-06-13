@@ -19,9 +19,6 @@ namespace ProductionGame.UI
 
     public class ResourceBuildingMenuView : MonoBehaviour, IResourceBuildingMenuView, IDisposable
     {
-        private static readonly string StartText = "Start";
-        private static readonly string StopText = "Stop";
-
         public event Action<ResourceBuildingModel, ResourceType> OnNextResourceSelected;
         public event Action<ResourceBuildingModel> OnStartClicked;
         public event Action<ResourceBuildingModel> OnStopClicked;
@@ -70,8 +67,8 @@ namespace ProductionGame.UI
         public void SetStartButtonState(bool active)
         {
             var text = active
-                ? StopText
-                : StartText;
+                ? ButtonText.StopText
+                : ButtonText.StartText;
 
             _startAndStopText.SetText(text);
         }

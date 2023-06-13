@@ -40,10 +40,9 @@ namespace ProductionGame.Models
                 .Select(product => product.Key);
         }
 
-        public bool HasResource(ResourceType resourceType1, ResourceType resourceType2)
+        public bool HasResource(params ResourceType[] resources)
         {
-            return GetCount(resourceType1) > 0
-                   && GetCount(resourceType2) > 0;
+            return resources.All(resource => GetCount(resource) > 0);
         }
     }
 }

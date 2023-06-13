@@ -30,13 +30,13 @@ namespace ProductionGame.Controllers
         {
             _currentBuildingModel = processingBuilding;
             _processingBuildingMenuView.Show();
-            _processingBuildingMenuView.SetStartButtonActive(!processingBuilding.IsProductionActive
-                                                             && _storageModel.HasResource(
-                                                                 processingBuilding.ResourceType1,
-                                                                 processingBuilding.ResourceType2));
+            _processingBuildingMenuView.SetStartButtonState(!processingBuilding.IsProductionActive
+                                                            && _storageModel.HasResource(
+                                                                processingBuilding.ResourceType1,
+                                                                processingBuilding.ResourceType2));
         }
 
-        private void StartProduction()
+        private void StartProduction(ResourceType resource1Type, ResourceType resource2Type)
         {
             if (_currentBuildingModel == null)
                 return;
@@ -44,13 +44,12 @@ namespace ProductionGame.Controllers
             if (_currentBuildingModel.IsProductionActive)
                 return;
 
-            _currentBuildingModel.SetResourceTypes(_processingBuildingMenuView.GetSelectedResourceType1(),
-                _processingBuildingMenuView.GetSelectedResourceType2());
+            _currentBuildingModel.SetResourceTypes(resource1Type, resource2Type);
 
             if (!_storageModel.HasResource(_currentBuildingModel.ResourceType1, _currentBuildingModel.ResourceType2))
                 throw new InvalidOperationException("Insufficient resources to start production.");
 
-            _processingBuildingMenuView.SetStartButtonActive(false);
+            _processingBuildingMenuView.SetStartButtonState(false);
             _currentBuildingModel.StartProductionAsync().ConfigureAwait(false);
         }
 
@@ -61,10 +60,10 @@ namespace ProductionGame.Controllers
                 return;
 
             _currentBuildingModel.StopProduction();
-            _processingBuildingMenuView.SetStartButtonActive(!_currentBuildingModel.IsProductionActive
-                                                             && _storageModel.HasResource(
-                                                                 _currentBuildingModel.ResourceType1,
-                                                                 _currentBuildingModel.ResourceType2));
+            _processingBuildingMenuView.SetStartButtonState(!_currentBuildingModel.IsProductionActive
+                                                            && _storageModel.HasResource(
+                                                                _currentBuildingModel.ResourceType1,
+                                                                _currentBuildingModel.ResourceType2));
         }
     }
 }
