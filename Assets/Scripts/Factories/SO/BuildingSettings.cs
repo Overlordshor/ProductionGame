@@ -4,7 +4,7 @@ using UnityEngine;
 namespace ProductionGame.SO
 {
     [CreateAssetMenu(fileName = nameof(BuildingSettings),
-        menuName = "ProductionGame/Resource Building Settings", order = 2)]
+        menuName = "ProductionGame/Building Settings", order = 2)]
     public class BuildingSettings : ScriptableObject
     {
         [SerializeField] private float _productionInterval;
