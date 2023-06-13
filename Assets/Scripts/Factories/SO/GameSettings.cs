@@ -8,13 +8,13 @@ namespace ProductionGame.SO
         [SerializeField] private BuildingSettings _marketBuildingSettings;
         [SerializeField] private BuildingSettings _processingBuildingSettings;
         [SerializeField] private BuildingSettings[] _resourceBuildingSettings;
-        [SerializeField] private ProductInfo[] _productsInfo;
+        [SerializeField] private ResourcesInfo[] _resourcesInfo;
         [SerializeField] private int _coinsToWin;
 
         public BuildingSettings ProcessingBuildingSettings => _processingBuildingSettings;
         public BuildingSettings MarketBuildingSettings => _marketBuildingSettings;
         public BuildingSettings[] ResourceBuildingSettings => _resourceBuildingSettings;
-        public ProductInfo[] ProductsInfo => _productsInfo;
+        public ResourcesInfo[] ResourcesInfo => _resourcesInfo;
         public int CoinsToWin => _coinsToWin;
     }
 }

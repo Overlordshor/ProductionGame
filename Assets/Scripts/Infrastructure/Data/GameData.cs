@@ -10,15 +10,12 @@ namespace ProductionGame.Infrastructure.Data
     {
         public int CoinCount { get; private set; }
         public Dictionary<ResourceType, int> StorageResources { get; }
-        public Dictionary<ProductType, int> StorageProducts { get; }
 
         [JsonConstructor]
-        public GameData(int coinCount, Dictionary<ResourceType, int> storageResources,
-            Dictionary<ProductType, int> storageProducts)
+        public GameData(int coinCount, Dictionary<ResourceType, int> storageResources)
         {
             CoinCount = coinCount;
             StorageResources = storageResources;
-            StorageProducts = storageProducts;
         }
 
         public void SetCoinsCount(int coins)
@@ -32,14 +29,6 @@ namespace ProductionGame.Infrastructure.Data
                 StorageResources[resource.Key] = resource.Value;
             else
                 StorageResources.Add(resource.Key, resource.Value);
-        }
-
-        public void SetProductsCount(KeyValuePair<ProductType, int> products)
-        {
-            if (StorageProducts.ContainsKey(products.Key))
-                StorageProducts[products.Key] = products.Value;
-            else
-                StorageProducts.Add(products.Key, products.Value);
         }
     }
 }

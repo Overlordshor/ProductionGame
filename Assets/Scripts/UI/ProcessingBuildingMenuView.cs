@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using ProductionGame.Models;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,49 +21,55 @@ namespace ProductionGame.UI
     {
         public event Action OnStartClicked;
         public event Action OnStopClicked;
-        [SerializeField] private Text productTypeText;
-        [SerializeField] private Dropdown resourceTypeDropdown1;
-        [SerializeField] private Dropdown resourceTypeDropdown2;
-        [SerializeField] private Button startButton;
-        [SerializeField] private Button stopButton;
-        [SerializeField] private bool showOnStart;
+        [SerializeField] private Text _resourceTypeText;
+        [SerializeField] private Dropdown _resourceTypeDropdown1;
+        [SerializeField] private Dropdown _resourceTypeDropdown2;
+        [SerializeField] private Button _startButton;
+        [SerializeField] private Button _stopButton;
+        [SerializeField] private bool _showOnStart;
 
         private void Start()
         {
-            gameObject.SetActive(showOnStart);
+            gameObject.SetActive(_showOnStart);
         }
         public void Show()
         {
-            resourceTypeDropdown1.ClearOptions();
-            resourceTypeDropdown2.ClearOptions();
+            _resourceTypeDropdown1.ClearOptions();
+            _resourceTypeDropdown2.ClearOptions();
 
-            var resourceTypes = Enum.GetValues(typeof(ResourceType));
-            var options = new List<Dropdown.OptionData>();
+            var resourceTypes = new[]
+            {
+                ResourceType.None,
+                ResourceType.Wood,
+                ResourceType.Stone,
+                ResourceType.Iron
+            };
 
-            foreach (var resourceType in resourceTypes)
-                options.Add(new Dropdown.OptionData(resourceType.ToString()));
+            var options = resourceTypes
+                .Select(resourceType => new Dropdown.OptionData(resourceType.ToString()))
+                .ToList();
 
-            resourceTypeDropdown1.AddOptions(options);
-            resourceTypeDropdown2.AddOptions(options);
+            _resourceTypeDropdown1.AddOptions(options);
+            _resourceTypeDropdown2.AddOptions(options);
 
-            startButton.onClick.AddListener(HandleStartClicked);
-            stopButton.onClick.AddListener(HandleStopClicked);
+            _startButton.onClick.AddListener(HandleStartClicked);
+            _stopButton.onClick.AddListener(HandleStopClicked);
         }
 
         public void SetStartButtonActive(bool isActive)
         {
-            startButton.interactable = isActive;
+            _startButton.interactable = isActive;
         }
 
         public ResourceType GetSelectedResourceType1()
         {
-            var selectedOption = resourceTypeDropdown1.options[resourceTypeDropdown1.value];
+            var selectedOption = _resourceTypeDropdown1.options[_resourceTypeDropdown1.value];
             return ParseResourceType(selectedOption);
         }
 
         public ResourceType GetSelectedResourceType2()
         {
-            var selectedOption = resourceTypeDropdown2.options[resourceTypeDropdown2.value];
+            var selectedOption = _resourceTypeDropdown2.options[_resourceTypeDropdown2.value];
             return ParseResourceType(selectedOption);
         }
 
@@ -90,8 +96,8 @@ namespace ProductionGame.UI
 
         private void OnDestroy()
         {
-            startButton.onClick.RemoveListener(HandleStartClicked);
-            stopButton.onClick.RemoveListener(HandleStopClicked);
+            _startButton.onClick.RemoveListener(HandleStartClicked);
+            _stopButton.onClick.RemoveListener(HandleStopClicked);
         }
     }
 }

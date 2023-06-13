@@ -6,10 +6,10 @@ namespace ProductionGame.Models
     public class ProcessingBuildingModel : IDisposable
     {
         public event Action<ResourceType> OnResourcesConsumed;
-        public event Action<ProductType> OnProductProduced;
+        public event Action<ResourceType> OnProductProduced;
         public event Action OnDisposed;
 
-        private ProductType _currentProductType;
+        private ResourceType _currentResourceType;
         private float _productionInterval;
         private readonly StorageModel _storageModel;
 
@@ -27,12 +27,12 @@ namespace ProductionGame.Models
         {
             ResourceType1 = resourceType1;
             ResourceType2 = resourceType2;
-            CalculateProductType();
+            CalculateResourceType();
         }
 
         public async Task StartProductionAsync()
         {
-            if (IsProductionActive || _currentProductType == ProductType.None)
+            if (IsProductionActive || _currentResourceType == ResourceType.None)
                 return;
 
             IsProductionActive = true;
@@ -55,19 +55,19 @@ namespace ProductionGame.Models
 
                 OnResourcesConsumed?.Invoke(ResourceType1);
                 OnResourcesConsumed?.Invoke(ResourceType2);
-                OnProductProduced?.Invoke(_currentProductType);
+                OnProductProduced?.Invoke(_currentResourceType);
             }
         }
 
 
-        private void CalculateProductType()
+        private void CalculateResourceType()
         {
-            _currentProductType = ResourceType1 switch
+            _currentResourceType = ResourceType1 switch
             {
-                ResourceType.Wood when ResourceType2 == ResourceType.Stone => ProductType.Hammers,
-                ResourceType.Wood when ResourceType2 == ResourceType.Iron => ProductType.Forks,
-                ResourceType.Stone when ResourceType2 == ResourceType.Iron => ProductType.Drills,
-                _ => ProductType.None
+                ResourceType.Wood when ResourceType2 == ResourceType.Stone => ResourceType.Hammers,
+                ResourceType.Wood when ResourceType2 == ResourceType.Iron => ResourceType.Forks,
+                ResourceType.Stone when ResourceType2 == ResourceType.Iron => ResourceType.Drills,
+                _ => ResourceType.None
             };
         }
 

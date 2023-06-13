@@ -5,6 +5,9 @@ namespace ProductionGame.Models
         None,
         Wood,
         Stone,
-        Iron
+        Iron,
+        Hammers,
+        Forks,
+        Drills
     }
 }

@@ -1,89 +1,112 @@
 using System;
-using System.Collections.Generic;
 using ProductionGame.Models;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace ProductionGame.UI
 {
-    public interface IResourceBuildingMenuView : IDisposable
+    public interface IResourceBuildingMenuView
     {
-        event Action<ResourceBuildingModel, ResourceType> OnCellClicked;
+        event Action<ResourceBuildingModel, ResourceType> OnNextResourceSelected;
         event Action<ResourceBuildingModel> OnStartClicked;
         event Action<ResourceBuildingModel> OnStopClicked;
-
         void Show(ResourceBuildingModel resourceBuilding);
-        void SetStartButtonActive(bool active);
+        void SetStartButtonState(bool active);
+        void SetCurrentResource(string resourceTitle, Sprite sprite);
+        void ClearCurrentResource();
     }
 
-    public class ResourceBuildingMenuView : MonoBehaviour, IResourceBuildingMenuView
+    public class ResourceBuildingMenuView : MonoBehaviour, IResourceBuildingMenuView, IDisposable
     {
-        public event Action<ResourceBuildingModel, ResourceType> OnCellClicked;
+        private static readonly string StartText = "Start";
+        private static readonly string StopText = "Stop";
+
+        public event Action<ResourceBuildingModel, ResourceType> OnNextResourceSelected;
         public event Action<ResourceBuildingModel> OnStartClicked;
         public event Action<ResourceBuildingModel> OnStopClicked;
 
-        [SerializeField] private CellObjectView _cellPrefab;
-        [SerializeField] private Transform _cellsContainer;
-        [SerializeField] private GameObject _inventoryItemPrefab;
-        [SerializeField] private Transform _inventoryPanel;
-        [SerializeField] private Button _startButton;
-        [SerializeField] private Button _stopButton;
-        [SerializeField] private bool showOnStart;
+        [SerializeField] private Button _nextResourceButton;
+        [SerializeField] private TextMeshProUGUI _resourceText;
+        [SerializeField] private bool _showOnStart;
+        [SerializeField] private Button _startAndStopButton;
+        [SerializeField] private TextMeshProUGUI _startAndStopText;
+        [SerializeField] private Button _closeButton;
+        private Image _resourceImage;
 
+        private ResourceBuildingModel _resourceBuilding;
+        private ResourceType[] _resourceTypes;
+        private int _currentResourceIndex;
 
-        private List<GameObject> _inventoryItems;
 
         private void Start()
         {
-            gameObject.SetActive(showOnStart);
+            _resourceImage = _nextResourceButton.GetComponent<Image>();
+            _startAndStopButton.onClick.AddListener(() =>
+            {
+                if (_resourceBuilding != null)
+                    OnStartClicked?.Invoke(_resourceBuilding);
+            });
+            _nextResourceButton.onClick.AddListener(SelectNextResource);
+            _closeButton.onClick.AddListener(() => gameObject.SetActive(false));
+
+
+            gameObject.SetActive(_showOnStart);
         }
 
         public void Show(ResourceBuildingModel resourceBuilding)
         {
-            ClearInventory();
-
-            foreach (ResourceType resource in Enum.GetValues(typeof(ResourceType)))
+            _resourceBuilding = resourceBuilding;
+            _resourceTypes = new[]
             {
-                var cellObject = Instantiate(_cellPrefab, _cellsContainer);
-                cellObject.SetText(resource.ToString());
-                cellObject.Subscribe(() => OnCellClicked?.Invoke(resourceBuilding, resource));
-            }
-
-
-            _startButton.onClick.AddListener(() => OnStartClicked?.Invoke(resourceBuilding));
-            _stopButton.onClick.AddListener(() => OnStopClicked?.Invoke(resourceBuilding));
+                ResourceType.Wood,
+                ResourceType.Stone,
+                ResourceType.Iron
+            };
 
             gameObject.SetActive(true);
         }
 
-        public void SetStartButtonActive(bool active)
+        public void SetStartButtonState(bool active)
         {
-            _startButton.gameObject.SetActive(active);
-            _stopButton.gameObject.SetActive(!active);
+            var text = active
+                ? StopText
+                : StartText;
+
+            _startAndStopText.SetText(text);
         }
 
         public void Dispose()
         {
-            OnCellClicked = null;
+            OnNextResourceSelected = null;
             OnStartClicked = null;
             OnStopClicked = null;
         }
 
-        private void ClearInventory()
+        public void SetCurrentResource(string resourceTitle, Sprite sprite)
         {
-            if (_inventoryItems == null)
-                return;
+            _resourceText.text = resourceTitle;
+            _resourceImage.sprite = sprite;
+        }
 
-            foreach (var item in _inventoryItems)
-                Destroy(item);
+        public void ClearCurrentResource()
+        {
+            SetCurrentResource(null, null);
+            _currentResourceIndex = 0;
+        }
 
-            _inventoryItems.Clear();
+        private void SelectNextResource()
+        {
+            _currentResourceIndex = (_currentResourceIndex + 1) % _resourceTypes.Length;
+
+            var selectedResource = _resourceTypes[_currentResourceIndex];
+            OnNextResourceSelected?.Invoke(_resourceBuilding, selectedResource);
         }
 
         private void OnDestroy()
         {
-            _startButton.onClick.RemoveAllListeners();
-            _stopButton.onClick.RemoveAllListeners();
+            _startAndStopButton.onClick.RemoveAllListeners();
+            _nextResourceButton.onClick.RemoveAllListeners();
         }
     }
 }

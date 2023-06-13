@@ -8,8 +8,8 @@ namespace ProductionGame.Models
         public event Action<ResourceType> OnResourceProduced;
         public event Action OnDisposed;
 
-        private ResourceType _currentResourceType;
         private float _productionInterval;
+        public ResourceType ResourceType { get; private set; }
 
         public ResourceBuildingModel(float productionInterval)
         {
@@ -24,7 +24,7 @@ namespace ProductionGame.Models
             if (IsProductionActive)
                 return;
 
-            if (_currentResourceType == ResourceType.None)
+            if (ResourceType == ResourceType.None)
                 throw new InvalidOperationException();
 
             IsProductionActive = true;
@@ -39,7 +39,7 @@ namespace ProductionGame.Models
 
         public void SetCurrentResource(ResourceType resourceType)
         {
-            _currentResourceType = resourceType;
+            ResourceType = resourceType;
         }
 
         private async Task ProduceResourcesAsync()
@@ -47,7 +47,7 @@ namespace ProductionGame.Models
             while (IsProductionActive)
             {
                 await Task.Delay(TimeSpan.FromSeconds(_productionInterval));
-                OnResourceProduced?.Invoke(_currentResourceType);
+                OnResourceProduced?.Invoke(ResourceType);
             }
         }
 

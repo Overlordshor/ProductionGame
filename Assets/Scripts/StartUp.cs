@@ -27,13 +27,14 @@ namespace ProductionGame
             var playerModel = new PlayerModel();
             var gameDataSaver = new GameDataSaver();
             var marketController =
-                new MarketController(_marketView, playerModel, _gameSettings.ProductsInfo, gameDataSaver);
+                new MarketController(_marketView, playerModel, _gameSettings.ResourcesInfo, gameDataSaver);
             var processingBuildingController =
                 new ProcessingBuildingController(_processingBuildingMenuView, storageModel);
             var storageController = new StorageController(storageModel, _storageView, gameDataSaver);
             var buildingFactory = new BuildingFactory(_gameSettings, storageController, _disposables, storageModel);
             var buildingsViewRepository = new BuildingsViewRepository();
-            var resourceBuildingController = new ResourceBuildingController(_resourceBuildingMenuView);
+            var resourceBuildingController =
+                new ResourceBuildingController(_resourceBuildingMenuView, _gameSettings.ResourcesInfo);
 
             var gameContext = new GameContext(playerModel, _gameSettings);
             var gameFactory = new GameFactory(gameContext, buildingFactory, resourceBuildingController,
