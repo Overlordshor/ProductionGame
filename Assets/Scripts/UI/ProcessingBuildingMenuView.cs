@@ -24,11 +24,14 @@ namespace ProductionGame.UI
         [SerializeField] private Text productTypeText;
         [SerializeField] private Dropdown resourceTypeDropdown1;
         [SerializeField] private Dropdown resourceTypeDropdown2;
-
         [SerializeField] private Button startButton;
         [SerializeField] private Button stopButton;
+        [SerializeField] private bool showOnStart;
 
-
+        private void Start()
+        {
+            gameObject.SetActive(showOnStart);
+        }
         public void Show()
         {
             resourceTypeDropdown1.ClearOptions();

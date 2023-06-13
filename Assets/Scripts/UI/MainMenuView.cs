@@ -19,6 +19,7 @@ namespace ProductionGame.UI
 
         [SerializeField] private Toggle[] _buildingCountToggles;
         [SerializeField] private Button _startButton;
+        [SerializeField] private bool showOnStart;
 
         private void Start()
         {
@@ -38,6 +39,8 @@ namespace ProductionGame.UI
                 OnStartGameClicked?.Invoke();
                 gameObject.SetActive(false);
             });
+
+            gameObject.SetActive(showOnStart);
         }
 
         public void Show()

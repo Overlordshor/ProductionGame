@@ -21,11 +21,17 @@ namespace ProductionGame.UI
         [SerializeField] private Text _productText;
         [SerializeField] private Text _priceText;
         [SerializeField] private Button _sellButton;
+        [SerializeField] private bool showOnStart;
 
         private ProductType[] _availableProducts;
         private int _currentProductIndex;
         private ProductInfo[] _productsInfo;
         private ProductInfo _currentProductInfo;
+
+        private void Start()
+        {
+            gameObject.SetActive(showOnStart);
+        }
 
         public void Init(ProductInfo[] productsInfo)
         {

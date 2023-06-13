@@ -28,9 +28,15 @@ namespace ProductionGame.UI
         [SerializeField] private Transform _inventoryPanel;
         [SerializeField] private Button _startButton;
         [SerializeField] private Button _stopButton;
+        [SerializeField] private bool showOnStart;
 
 
         private List<GameObject> _inventoryItems;
+
+        private void Start()
+        {
+            gameObject.SetActive(showOnStart);
+        }
 
         public void Show(ResourceBuildingModel resourceBuilding)
         {

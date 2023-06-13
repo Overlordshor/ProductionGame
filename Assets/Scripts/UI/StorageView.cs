@@ -15,9 +15,15 @@ namespace ProductionGame.UI
     {
         [SerializeField] private Transform _content;
         [SerializeField] private TextMeshProUGUI _itemPrefab;
+        [SerializeField] private bool showOnStart;
 
         private readonly Dictionary<ResourceType, TextMeshProUGUI> _resourceTexts = new();
         private readonly Dictionary<ProductType, TextMeshProUGUI> _productsTexts = new();
+
+        private void Start()
+        {
+            gameObject.SetActive(showOnStart);
+        }
 
         public void UpdateCount(ResourceType resourceType, int count)
         {

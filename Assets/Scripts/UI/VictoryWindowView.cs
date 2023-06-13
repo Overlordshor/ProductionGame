@@ -15,10 +15,12 @@ namespace ProductionGame.UI
         public event Action OnMainMenuClicked;
 
         [SerializeField] private Button _mainMenuButton;
+        [SerializeField] private bool showOnStart;
 
         private void Start()
         {
             _mainMenuButton.onClick.AddListener(HandleMainMenuClicked);
+            gameObject.SetActive(showOnStart);
         }
 
         public void Show()
