@@ -7,5 +7,10 @@ namespace ProductionGame.GameView
     {
         protected abstract void Click();
         public abstract void Dispose();
+
+        private void OnMouseDown()
+        {
+            Click();
+        }
     }
 }

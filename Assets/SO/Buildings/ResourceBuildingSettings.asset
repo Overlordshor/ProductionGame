@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ResourceBuildingSettings
   m_EditorClassIdentifier: 
   _productionInterval: 2
-  _buildingPrefab: {fileID: 0}
-  _buildingPosition: {x: 1, y: 0, z: 0}
+  _buildingPrefab: {fileID: 1107121982326865439, guid: a6376e1a262ae3c4f973d4bd151658fe, type: 3}
+  _buildingPosition: {x: -6.83, y: 2.026779, z: -9.8}
