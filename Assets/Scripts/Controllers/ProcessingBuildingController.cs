@@ -36,10 +36,7 @@ namespace ProductionGame.Controllers
         {
             _processingBuilding = processingBuilding;
             _processingBuildingMenuView.Show();
-            _processingBuildingMenuView.SetStartButtonState(!processingBuilding.IsProductionActive
-                                                            && _storageModel.HasResource(
-                                                                processingBuilding.ResourceType1,
-                                                                processingBuilding.ResourceType2));
+            UpdateStartButton();
         }
 
         private void SelectResource(ResourceType resource1Type, ResourceType resource2Type)
@@ -83,11 +80,6 @@ namespace ProductionGame.Controllers
             UpdateStartButton();
         }
 
-
-        private void StopProduction()
-        {
-            UpdateStartButton();
-        }
 
         private void UpdateStartButton()
         {

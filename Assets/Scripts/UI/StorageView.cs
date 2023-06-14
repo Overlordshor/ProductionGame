@@ -21,13 +21,18 @@ namespace ProductionGame.UI
         private void Start()
         {
             _itemPrefab.gameObject.SetActive(false);
+            _resourceGroup.gameObject.SetActive(false);
             gameObject.SetActive(_showOnStart);
         }
 
         public void UpdateCount(ResourcesInfo resourceInfo, int count)
         {
             if (!_items.ContainsKey(resourceInfo.ResourceType))
+            {
+                _resourceGroup.gameObject.SetActive(true);
                 CreateItem(resourceInfo);
+                return;
+            }
 
             var itemView = _items[resourceInfo.ResourceType];
             itemView.SetCount(count);

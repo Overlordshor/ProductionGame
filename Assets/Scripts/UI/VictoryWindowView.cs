@@ -11,21 +11,19 @@ namespace ProductionGame.UI
         void Show();
     }
 
-    public class VictoryWindowView : MonoBehaviour, IVictoryWindowView, IDisposable
+    public class VictoryWindowView : View, IVictoryWindowView, IDisposable
     {
         public event Action OnMainMenuClicked;
 
         [SerializeField] private Button _mainMenuButton;
-        [SerializeField] private bool _showOnStart;
         [SerializeField] private RectTransform _popup;
         [SerializeField] private float _animationDuration = 0.5f;
 
 
-        private void Start()
+        protected override void OnStart()
         {
             _popup.position = new Vector3(0f, -Screen.height, 0f);
             _mainMenuButton.onClick.AddListener(HandleMainMenuClicked);
-            gameObject.SetActive(_showOnStart);
         }
 
         public void Show()

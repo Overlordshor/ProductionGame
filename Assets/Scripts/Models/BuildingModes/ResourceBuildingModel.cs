@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 
 namespace ProductionGame.Models
@@ -9,6 +10,7 @@ namespace ProductionGame.Models
         public event Action OnDisposed;
 
         private float _productionInterval;
+        private CancellationTokenSource _ctx;
         public ResourceType ResourceType { get; private set; }
 
         public ResourceBuildingModel(float productionInterval)
@@ -29,11 +31,13 @@ namespace ProductionGame.Models
 
             IsProductionActive = true;
 
-            await ProduceResourcesAsync();
+            _ctx = new CancellationTokenSource();
+            await ProduceResourcesAsync(_ctx.Token);
         }
 
         public void StopProduction()
         {
+            _ctx.Cancel();
             IsProductionActive = false;
         }
 
@@ -42,11 +46,14 @@ namespace ProductionGame.Models
             ResourceType = resourceType;
         }
 
-        private async UniTask ProduceResourcesAsync()
+        private async UniTask ProduceResourcesAsync(CancellationToken cancellationToken)
         {
-            while (IsProductionActive)
+            while (IsProductionActive && !cancellationToken.IsCancellationRequested)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(_productionInterval));
+                await UniTask.Delay(TimeSpan.FromSeconds(_productionInterval), cancellationToken: cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                    return;
+
                 OnResourceProduced?.Invoke(ResourceType);
             }
         }

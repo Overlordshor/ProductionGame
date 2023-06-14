@@ -16,14 +16,13 @@ namespace ProductionGame.UI
         void SetStartButtonState(bool value);
     }
 
-    public class MarketView : MonoBehaviour, IMarketView, IDisposable
+    public class MarketView : View, IMarketView, IDisposable
     {
         public event Action<ResourcesInfo> OnSellClicked;
         public event Action<ResourcesInfo> OnNextProductSelected;
 
         [SerializeField] private Button _nextProductButton;
         [SerializeField] private TextMeshProUGUI _productText;
-        [SerializeField] private bool _showOnStart;
         [SerializeField] private TextMeshProUGUI _priceText;
         [SerializeField] private Button _sellButton;
         [SerializeField] private Button _closeButton;
@@ -32,7 +31,7 @@ namespace ProductionGame.UI
         private ResourcesInfo[] _availableProducts;
         private int _currentProductIndex;
 
-        private void Start()
+        protected override void OnStart()
         {
             _productImage = _nextProductButton.GetComponent<Image>();
             _nextProductButton.onClick.AddListener(SelectNextResource);
@@ -41,8 +40,6 @@ namespace ProductionGame.UI
             _productImage = _nextProductButton.GetComponent<Image>();
 
             _sellButton.onClick.AddListener(HandleSellClicked);
-
-            gameObject.SetActive(_showOnStart);
         }
 
 

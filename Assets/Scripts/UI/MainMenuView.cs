@@ -12,16 +12,15 @@ namespace ProductionGame.UI
         void Show();
     }
 
-    public class MainMenuView : MonoBehaviour, IMainMenuView
+    public class MainMenuView : View, IMainMenuView
     {
         public event Action<int> OnBuildCountSelected;
         public event Action OnStartGameClicked;
 
         [SerializeField] private Toggle[] _buildingCountToggles;
         [SerializeField] private Button _startButton;
-        [SerializeField] private bool showOnStart;
 
-        private void Start()
+        protected override void OnStart()
         {
             for (var index = 0; index < _buildingCountToggles.Length; index++)
             {
@@ -39,8 +38,6 @@ namespace ProductionGame.UI
                 OnStartGameClicked?.Invoke();
                 gameObject.SetActive(false);
             });
-
-            gameObject.SetActive(showOnStart);
         }
 
         public void Show()

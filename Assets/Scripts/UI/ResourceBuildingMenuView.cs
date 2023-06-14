@@ -16,14 +16,13 @@ namespace ProductionGame.UI
         void ClearCurrentResource();
     }
 
-    public class ResourceBuildingMenuView : MonoBehaviour, IResourceBuildingMenuView, IDisposable
+    public class ResourceBuildingMenuView : View, IResourceBuildingMenuView, IDisposable
     {
         public event Action<ResourceBuildingModel, ResourceType> OnNextResourceSelected;
         public event Action<ResourceBuildingModel> OnStartClicked;
 
         [SerializeField] private Button _nextResourceButton;
         [SerializeField] private TextMeshProUGUI _resourceText;
-        [SerializeField] private bool _showOnStart;
         [SerializeField] private Button _startAndStopButton;
         [SerializeField] private TextMeshProUGUI _startAndStopText;
         [SerializeField] private Button _closeButton;
@@ -34,7 +33,7 @@ namespace ProductionGame.UI
         private int _currentResourceIndex;
 
 
-        private void Start()
+        protected override void OnStart()
         {
             _resourceImage = _nextResourceButton.GetComponent<Image>();
             _startAndStopButton.onClick.AddListener(() => OnStartClicked?.Invoke(_resourceBuilding));
@@ -47,8 +46,6 @@ namespace ProductionGame.UI
                 ResourceType.Stone,
                 ResourceType.Iron
             };
-
-            gameObject.SetActive(_showOnStart);
         }
 
         public void Show(ResourceBuildingModel resourceBuilding)

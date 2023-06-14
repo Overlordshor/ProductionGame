@@ -20,6 +20,9 @@ namespace ProductionGame.Models
                 ResourceType.Wood when resource2Type == ResourceType.Stone => ResourceType.Hammers,
                 ResourceType.Wood when resource2Type == ResourceType.Iron => ResourceType.Forks,
                 ResourceType.Stone when resource2Type == ResourceType.Iron => ResourceType.Drills,
+                ResourceType.Stone when resource2Type == ResourceType.Wood => ResourceType.Hammers,
+                ResourceType.Iron when resource2Type == ResourceType.Wood => ResourceType.Forks,
+                ResourceType.Iron when resource2Type == ResourceType.Stone => ResourceType.Drills,
                 _ => ResourceType.None
             };
         }

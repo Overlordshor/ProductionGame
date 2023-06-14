@@ -17,12 +17,11 @@ namespace ProductionGame.UI
         void SetActiveStartButton(bool isEnable);
     }
 
-    public class ProcessingBuildingMenuView : MonoBehaviour, IProcessingBuildingMenuView, IDisposable
+    public class ProcessingBuildingMenuView : View, IProcessingBuildingMenuView, IDisposable
     {
         public event Action<ResourceType, ResourceType> OnStartClicked;
         public event Action<ResourceType, ResourceType> OnResourcesSelected;
 
-        [SerializeField] private bool _showOnStart;
         [SerializeField] private Button _resource1Button;
         [SerializeField] private Button _resource2Button;
         [SerializeField] private TextMeshProUGUI _productText;
@@ -33,12 +32,11 @@ namespace ProductionGame.UI
         private Image _resource1Image;
         private Image _resource2Image;
 
-        private bool isStart;
         private ResourceType[] _resourceTypes;
 
         private int[] _currentResourceIndexes = { 0, 0 };
 
-        private void Start()
+        protected override void OnStart()
         {
             _resource1Image = _resource1Button.GetComponent<Image>();
             _resource2Image = _resource2Button.GetComponent<Image>();
@@ -51,6 +49,7 @@ namespace ProductionGame.UI
                 var resource2 = _resourceTypes[_currentResourceIndexes[1]];
                 OnStartClicked?.Invoke(resource1, resource2);
             });
+            _closeButton.onClick.AddListener(() => gameObject.SetActive(false));
 
             _resourceTypes = new[]
             {
@@ -59,8 +58,6 @@ namespace ProductionGame.UI
                 ResourceType.Stone,
                 ResourceType.Iron
             };
-
-            gameObject.SetActive(_showOnStart);
         }
 
 
