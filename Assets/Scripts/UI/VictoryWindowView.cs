@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,10 +17,13 @@ namespace ProductionGame.UI
 
         [SerializeField] private Button _mainMenuButton;
         [SerializeField] private bool _showOnStart;
+        [SerializeField] private RectTransform _popup;
+        [SerializeField] private float _animationDuration = 0.5f;
 
 
         private void Start()
         {
+            _popup.position = new Vector3(0f, -Screen.height, 0f);
             _mainMenuButton.onClick.AddListener(HandleMainMenuClicked);
             gameObject.SetActive(_showOnStart);
         }
@@ -27,6 +31,10 @@ namespace ProductionGame.UI
         public void Show()
         {
             gameObject.SetActive(true);
+            _popup.DOKill();
+            _popup
+                .DOMoveY(0f, _animationDuration)
+                .SetEase(Ease.OutBack);
         }
 
         public void Dispose()
@@ -36,7 +44,10 @@ namespace ProductionGame.UI
 
         private void Hide()
         {
-            gameObject.SetActive(false);
+            _popup.DOKill();
+            _popup.DOMoveY(-Screen.height, _animationDuration)
+                .SetEase(Ease.InBack)
+                .OnComplete(() => gameObject.SetActive(false));
         }
 
 
