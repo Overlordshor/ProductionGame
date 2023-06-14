@@ -27,6 +27,16 @@ namespace ProductionGame.Controllers
             _victoryWindowView.OnMainMenuClicked += ShowMainMenuView;
 
             _gameContext.OnGameWon += ShowVictoryWindow;
+
+            SelectBuildCount(1);
+        }
+
+        public void Dispose()
+        {
+            _mainMenuView.OnBuildCountSelected -= SelectBuildCount;
+            _mainMenuView.OnStartGameClicked -= StartGame;
+            _victoryWindowView.OnMainMenuClicked -= ShowMainMenuView;
+            _gameContext.OnGameWon -= ShowVictoryWindow;
         }
 
 
@@ -42,20 +52,15 @@ namespace ProductionGame.Controllers
 
         private void SelectBuildCount(int buildCount)
         {
+            _gameFactory.Clear();
             _gameContext.SelectBuildingCount(buildCount);
+            for (var i = 0; i < buildCount; i++)
+                _gameFactory.CreateResourceBuilding(i);
         }
 
         private void StartGame()
         {
             _gameFactory.Create();
-        }
-
-        public void Dispose()
-        {
-            _mainMenuView.OnBuildCountSelected -= SelectBuildCount;
-            _mainMenuView.OnStartGameClicked -= StartGame;
-            _victoryWindowView.OnMainMenuClicked -= ShowMainMenuView;
-            _gameContext.OnGameWon -= ShowVictoryWindow;
         }
     }
 }

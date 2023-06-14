@@ -18,8 +18,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5a9af5c196a39f848af9a732eb9825b6, type: 2}
   - {fileID: 11400000, guid: 0ab417e7df1e0bb40951d6cc0076e879, type: 2}
   - {fileID: 11400000, guid: 44906fe43f90a4d40adc606ebdbd46bc, type: 2}
-  _productsInfo:
+  _resourcesInfo:
   - {fileID: 11400000, guid: d9d7b74e72aa7d14ea98856e6b87127b, type: 2}
   - {fileID: 11400000, guid: 81404fad572413f40823033de5185329, type: 2}
   - {fileID: 11400000, guid: b0e73067bca7b36459a13effdf266b1d, type: 2}
+  - {fileID: 11400000, guid: 89bd08d05437f864d88ec54388dda8cd, type: 2}
+  - {fileID: 11400000, guid: 9c8d90184f91cd94ead8ed9071a25dfe, type: 2}
+  - {fileID: 11400000, guid: d9783bfb5a32a574aaf0424934ae5bc1, type: 2}
   _coinsToWin: 30

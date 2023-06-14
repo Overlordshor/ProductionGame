@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using ProductionGame.Models;
 using ProductionGame.SO;
 using ProductionGame.UI;
@@ -73,7 +74,7 @@ namespace ProductionGame.Controllers
             if (!_storageModel.HasResource(_processingBuilding.ResourceType1, _processingBuilding.ResourceType2))
                 throw new InvalidOperationException("Insufficient resources to start production.");
 
-            _processingBuilding.StartProductionAsync().ConfigureAwait(false);
+            _processingBuilding.StartProductionAsync().Forget();
             UpdateStartButton();
         }
 

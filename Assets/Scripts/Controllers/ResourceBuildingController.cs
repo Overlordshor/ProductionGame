@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using ProductionGame.Models;
 using ProductionGame.SO;
 using ProductionGame.UI;
@@ -21,8 +22,7 @@ namespace ProductionGame.Controllers
             _resourceBuildingMenuView = resourceBuildingMenuView;
             _resourcesInfo = resourcesInfo;
             _resourceBuildingMenuView.OnNextResourceSelected += SelectResource;
-            _resourceBuildingMenuView.OnStartClicked += StartProduction;
-            _resourceBuildingMenuView.OnStopClicked += StopProduction;
+            _resourceBuildingMenuView.OnStartClicked += StartOrStopProduction;
 
             _resourceBuildingMenuView.SetStartButtonState(false);
         }
@@ -40,29 +40,29 @@ namespace ProductionGame.Controllers
                 _resourceBuildingMenuView.SetCurrentResource(info.Name, info.Sprite);
             }
 
-            _resourceBuildingMenuView.SetStartButtonState(!resourceBuilding.IsProductionActive);
+            _resourceBuildingMenuView.SetStartButtonState(resourceBuilding.IsProductionActive);
             _resourceBuildingMenuView.Show(resourceBuilding);
         }
 
         private void SelectResource(ResourceBuildingModel resourceBuilding, ResourceType resourceType)
         {
-            var info = _resourcesInfo[resourceBuilding.ResourceType];
             resourceBuilding.SetCurrentResource(resourceType);
+
+            var info = _resourcesInfo[resourceBuilding.ResourceType];
             _resourceBuildingMenuView.SetCurrentResource(info.Name, info.Sprite);
-            _resourceBuildingMenuView.SetStartButtonState(!resourceBuilding.IsProductionActive);
+            _resourceBuildingMenuView.SetStartButtonState(resourceBuilding.IsProductionActive);
         }
 
 
-        private void StartProduction(ResourceBuildingModel resourceBuilding)
+        private void StartOrStopProduction(ResourceBuildingModel resourceBuilding)
         {
-            _resourceBuildingMenuView.SetStartButtonState(false);
-            resourceBuilding.StartProductionAsync().ConfigureAwait(false);
-        }
+            var isProductionActive = resourceBuilding.IsProductionActive;
+            if (isProductionActive)
+                resourceBuilding.StopProduction();
+            else
+                resourceBuilding.StartProductionAsync().Forget();
 
-        private void StopProduction(ResourceBuildingModel resourceBuilding)
-        {
-            resourceBuilding.StopProduction();
-            _resourceBuildingMenuView.SetStartButtonState(true);
+            _resourceBuildingMenuView.SetStartButtonState(resourceBuilding.IsProductionActive);
         }
     }
 }

@@ -1,22 +1,15 @@
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace ProductionGame.Models
 {
     public class ProcessingBuildingModel : IDisposable
     {
-        public event Action<ResourceType> OnResourcesConsumed;
-        public event Action<ResourceType> OnProductProduced;
-        public event Action OnDisposed;
-
-        private float _productionInterval;
         private readonly StorageModel _storageModel;
         private Craft _craft;
 
-        public bool IsProductionActive { get; private set; }
-        public ResourceType ResourceType1 => _craft?.Resources[0] ?? ResourceType.None;
-        public ResourceType ResourceType2 => _craft?.Resources[1] ?? ResourceType.None;
-        public ResourceType ProductType => _craft?.Product ?? ResourceType.None;
+        private float _productionInterval;
 
         public ProcessingBuildingModel(float productionInterval, StorageModel storageModel)
         {
@@ -24,12 +17,30 @@ namespace ProductionGame.Models
             _storageModel = storageModel;
         }
 
+        public bool IsProductionActive { get; private set; }
+        public ResourceType ResourceType1 => _craft?.Resources[0] ?? ResourceType.None;
+        public ResourceType ResourceType2 => _craft?.Resources[1] ?? ResourceType.None;
+        public ResourceType ProductType => _craft?.Product ?? ResourceType.None;
+
+
+        public void Dispose()
+        {
+            OnResourcesConsumed = null;
+            OnProductProduced = null;
+            OnDisposed?.Invoke();
+            OnDisposed = null;
+        }
+
+        public event Action<ResourceType> OnResourcesConsumed;
+        public event Action<ResourceType> OnProductProduced;
+        public event Action OnDisposed;
+
         public void SetResourceTypes(ResourceType resourceType1, ResourceType resourceType2)
         {
             _craft = new Craft(new[] { resourceType1, resourceType2 });
         }
 
-        public async Task StartProductionAsync()
+        public async UniTask StartProductionAsync()
         {
             if (IsProductionActive || ProductType == ResourceType.None)
                 return;
@@ -45,26 +56,21 @@ namespace ProductionGame.Models
             IsProductionActive = false;
         }
 
-        private async Task ProduceProductsAsync()
+        private async UniTask ProduceProductsAsync()
         {
             while (IsProductionActive
                    && !_storageModel.HasResource(_craft.Resources))
             {
-                await Task.Delay(TimeSpan.FromSeconds(_productionInterval));
+                Debug.Log(
+                    $"Start {nameof(ProduceProductsAsync)} {ProductType} from {ResourceType1} and {ResourceType2}");
+                await UniTask.Delay(TimeSpan.FromSeconds(_productionInterval));
+
 
                 OnResourcesConsumed?.Invoke(ResourceType1);
                 OnResourcesConsumed?.Invoke(ResourceType2);
-                OnProductProduced?.Invoke(_craft.Product);
+                OnProductProduced?.Invoke(ProductType);
+                Debug.Log($"End {nameof(ProduceProductsAsync)} {ProductType} from {ResourceType1} and {ResourceType2}");
             }
-        }
-
-
-        public void Dispose()
-        {
-            OnResourcesConsumed = null;
-            OnProductProduced = null;
-            OnDisposed?.Invoke();
-            OnDisposed = null;
         }
     }
 }

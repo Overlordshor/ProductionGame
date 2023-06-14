@@ -4,14 +4,16 @@ using ProductionGame.GameView;
 
 namespace ProductionGame.Repositories
 {
-    public interface IBuildingsViewRepository
+    public interface IBuildingsViewRepository : IDisposable
     {
         void Add<T>(IBuildingView<T> building);
 
         IReadOnlyCollection<BuildingView> GetAll();
+
+        void Clear();
     }
 
-    public class BuildingsViewRepository : IBuildingsViewRepository, IDisposable
+    public class BuildingsViewRepository : IBuildingsViewRepository
     {
         private List<BuildingView> _buildings = new();
 
@@ -22,7 +24,12 @@ namespace ProductionGame.Repositories
 
         public IReadOnlyCollection<BuildingView> GetAll()
         {
-            throw new NotImplementedException();
+            return _buildings;
+        }
+
+        public void Clear()
+        {
+            _buildings.Clear();
         }
 
         public void Dispose()

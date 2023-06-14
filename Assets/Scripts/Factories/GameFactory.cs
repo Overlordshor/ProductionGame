@@ -1,14 +1,16 @@
 using ProductionGame.Controllers;
 using ProductionGame.Models;
 using ProductionGame.Repositories;
-using ProductionGame.SO;
 using ProductionGame.UI;
+using UnityEngine;
 
 namespace ProductionGame.Factories
 {
     public interface IGameFactory
     {
         void Create();
+        void CreateResourceBuilding(int index);
+        void Clear();
     }
 
     public class GameFactory : IGameFactory
@@ -26,8 +28,7 @@ namespace ProductionGame.Factories
             IResourceBuildingController resourceBuildingController,
             IBuildingsViewRepository buildingsViewRepository,
             IProcessingBuildingController processingBuildingController,
-            IMarketController marketController,
-            GameSettings gameSettings)
+            IMarketController marketController)
         {
             _gameContext = gameContext;
             _buildingFactory = buildingFactory;
@@ -41,11 +42,7 @@ namespace ProductionGame.Factories
         {
             var resourceBuildingCount = _gameContext.ResourceBuildingCount;
             for (var i = 0; i < resourceBuildingCount; i++)
-            {
-                var resourceBuilding = _buildingFactory.CreateResourceBuilding(i);
-                _buildingsViewRepository.Add(resourceBuilding);
-                resourceBuilding.OnBuildingClicked += _resourceBuildingController.ShowResourceBuildingWindow;
-            }
+                CreateResourceBuilding(i);
 
             var processingBuilding = _buildingFactory.CreateProcessingBuilding();
             _buildingsViewRepository.Add(processingBuilding);
@@ -54,6 +51,22 @@ namespace ProductionGame.Factories
             var market = _buildingFactory.CreateMarket();
             _buildingsViewRepository.Add(market);
             market.OnBuildingClicked += _marketController.ShowMarket;
+        }
+
+        public void CreateResourceBuilding(int index)
+        {
+            var resourceBuilding = _buildingFactory.CreateResourceBuilding(index);
+            _buildingsViewRepository.Add(resourceBuilding);
+            resourceBuilding.OnBuildingClicked += _resourceBuildingController.ShowResourceBuildingWindow;
+        }
+
+        public void Clear()
+        {
+            _buildingsViewRepository.Dispose();
+            foreach (var buildingView in _buildingsViewRepository.GetAll())
+                Object.Destroy(buildingView.gameObject);
+
+            _buildingsViewRepository.Clear();
         }
     }
 }

@@ -27,6 +27,7 @@ namespace ProductionGame
             var storageModel = new StorageModel();
             var playerModel = new PlayerModel();
             var gameDataSaver = new GameDataSaver();
+            gameDataSaver.Load();
 
             var gameResources = _gameSettings.ResourcesInfo.ToDictionary(key => key.ResourceType);
             var marketController =
@@ -41,7 +42,8 @@ namespace ProductionGame
 
             var gameContext = new GameContext(playerModel, _gameSettings);
             var gameFactory = new GameFactory(gameContext, buildingFactory, resourceBuildingController,
-                buildingsViewRepository, processingBuildingController, marketController, _gameSettings);
+                buildingsViewRepository, processingBuildingController, marketController);
+
             var mainMenuController =
                 new MainMenuController(gameContext, _mainMenuView, _victoryWindowView, gameFactory);
 

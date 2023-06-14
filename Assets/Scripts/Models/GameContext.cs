@@ -10,7 +10,7 @@ namespace ProductionGame.Models
         private readonly PlayerModel _playerModel;
         private readonly GameSettings _gameSettings;
 
-        public int ResourceBuildingCount { get; private set; }
+        public int ResourceBuildingCount { get; private set; } = 1;
 
         public GameContext(PlayerModel playerModel, GameSettings gameSettings)
         {

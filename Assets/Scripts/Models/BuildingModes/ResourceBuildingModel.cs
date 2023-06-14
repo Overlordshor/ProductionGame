@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace ProductionGame.Models
 {
@@ -19,7 +21,7 @@ namespace ProductionGame.Models
         public bool IsProductionActive { get; private set; }
 
 
-        public async Task StartProductionAsync()
+        public async UniTask StartProductionAsync()
         {
             if (IsProductionActive)
                 return;
@@ -42,12 +44,15 @@ namespace ProductionGame.Models
             ResourceType = resourceType;
         }
 
-        private async Task ProduceResourcesAsync()
+        private async UniTask ProduceResourcesAsync()
         {
             while (IsProductionActive)
             {
-                await Task.Delay(TimeSpan.FromSeconds(_productionInterval));
+                Debug.Log($"Start {nameof(ProduceResourcesAsync)} {ResourceType}");
+                await UniTask.Delay(TimeSpan.FromSeconds(_productionInterval));
+
                 OnResourceProduced?.Invoke(ResourceType);
+                Debug.Log($"End {nameof(ProduceResourcesAsync)} {ResourceType}");
             }
         }
 
