@@ -15,17 +15,23 @@ namespace ProductionGame.UI
         public event Action OnMainMenuClicked;
 
         [SerializeField] private Button _mainMenuButton;
-        [SerializeField] private bool showOnStart;
+        [SerializeField] private bool _showOnStart;
+
 
         private void Start()
         {
             _mainMenuButton.onClick.AddListener(HandleMainMenuClicked);
-            gameObject.SetActive(showOnStart);
+            gameObject.SetActive(_showOnStart);
         }
 
         public void Show()
         {
             gameObject.SetActive(true);
+        }
+
+        public void Dispose()
+        {
+            OnMainMenuClicked = null;
         }
 
         private void Hide()
@@ -43,11 +49,6 @@ namespace ProductionGame.UI
         private void OnDestroy()
         {
             _mainMenuButton.onClick.RemoveListener(HandleMainMenuClicked);
-        }
-
-        public void Dispose()
-        {
-            OnMainMenuClicked = null;
         }
     }
 }
