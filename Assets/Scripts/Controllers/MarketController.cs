@@ -29,8 +29,8 @@ namespace ProductionGame.UI
             _gameDataSaver = gameDataSaver;
 
             _marketView = marketView;
-            _marketView.Init(productsInfo);
             _marketView.OnSellClicked += SellProduct;
+            _marketView.OnNextProductSelected += SelectProduct;
         }
 
         public void ShowMarket(StorageModel storageModel)
@@ -38,12 +38,11 @@ namespace ProductionGame.UI
             _storageModel = storageModel;
             var availableProducts = _storageModel
                 .GetAvailableResources()
-                .Where(resource =>
-                {
-                    var productInfo = _productsInfo.First(info => info.ResourceType == resource);
-                    return productInfo.Price > 0;
-                }).ToArray();
+                .Select(resource => _productsInfo.First(info => info.ResourceType == resource))
+                .Where(productInfo => productInfo.Price > 0)
+                .ToArray();
 
+            _marketView.ClearCurrentResource();
             _marketView.Show(availableProducts);
         }
 
@@ -52,18 +51,22 @@ namespace ProductionGame.UI
             _marketView.OnSellClicked -= SellProduct;
         }
 
-        private void SellProduct(ResourceType resourceType)
+        private void SelectProduct(ResourcesInfo productInfo)
         {
-            var productInfo = _productsInfo.First(info => info.ResourceType == resourceType);
+            _marketView.SetCurrentResource(productInfo.Name, productInfo.Sprite);
+            _marketView.SetStartButtonState(_storageModel.GetCount(productInfo.ResourceType) > 0);
+        }
 
-            if (_storageModel.GetCount(resourceType) <= 0)
-                return;
+        private void SellProduct(ResourcesInfo productInfo)
+        {
+            if (_storageModel.GetCount(productInfo.ResourceType) <= 0)
+                throw new InvalidOperationException();
 
-            _storageModel.Remove(resourceType);
+            _storageModel.Remove(productInfo.ResourceType);
             _playerModel.AddCoins(productInfo.Price);
 
             _gameDataSaver.ChangeCoins(_playerModel.Coins);
-            _gameDataSaver.Change(resourceType, _storageModel.GetCount(resourceType));
+            _gameDataSaver.Change(productInfo.ResourceType, _storageModel.GetCount(productInfo.ResourceType));
             _gameDataSaver.SaveChanges();
         }
     }

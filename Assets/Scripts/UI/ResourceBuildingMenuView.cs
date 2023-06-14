@@ -104,6 +104,7 @@ namespace ProductionGame.UI
         {
             _startAndStopButton.onClick.RemoveAllListeners();
             _nextResourceButton.onClick.RemoveAllListeners();
+            _closeButton.onClick.RemoveAllListeners();
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
-using System.Linq;
-using ProductionGame.Models;
 using ProductionGame.SO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,81 +8,93 @@ namespace ProductionGame.UI
 {
     public interface IMarketView
     {
-        event Action<ResourceType> OnSellClicked;
-        void Init(ResourcesInfo[] productsInfo);
-        void Show(ResourceType[] availableProducts);
+        event Action<ResourcesInfo> OnSellClicked;
+        event Action<ResourcesInfo> OnNextProductSelected;
+        void Show(ResourcesInfo[] availableProducts);
+        void SetCurrentResource(string resourceTitle, Sprite sprite);
+        void ClearCurrentResource();
+        void SetStartButtonState(bool value);
     }
 
     public class MarketView : MonoBehaviour, IMarketView, IDisposable
     {
-        private ResourceType[] _availableProducts;
-        private int _currentProductIndex;
-        private ResourcesInfo _currentResourcesInfo;
-        [SerializeField] private Text _priceText;
-        private ResourcesInfo[] _productsInfo;
+        public event Action<ResourcesInfo> OnSellClicked;
+        public event Action<ResourcesInfo> OnNextProductSelected;
 
-        [SerializeField] private Text _productText;
+        [SerializeField] private Button _nextProductButton;
+        [SerializeField] private TextMeshProUGUI _productText;
+        [SerializeField] private bool _showOnStart;
+        [SerializeField] private TextMeshProUGUI _priceText;
         [SerializeField] private Button _sellButton;
-        [SerializeField] private bool showOnStart;
+        [SerializeField] private Button _closeButton;
+        private Image _productImage;
+
+        private ResourcesInfo[] _availableProducts;
+        private int _currentProductIndex;
+
+        private void Start()
+        {
+            _productImage = _nextProductButton.GetComponent<Image>();
+            _nextProductButton.onClick.AddListener(SelectNextResource);
+            _closeButton.onClick.AddListener(() => gameObject.SetActive(false));
+
+            _productImage = _nextProductButton.GetComponent<Image>();
+
+            _sellButton.onClick.AddListener(HandleSellClicked);
+
+            gameObject.SetActive(_showOnStart);
+        }
+
+
+        public void Show(ResourcesInfo[] availableProducts)
+        {
+            _availableProducts = availableProducts;
+            gameObject.SetActive(true);
+        }
 
         public void Dispose()
         {
             OnSellClicked = null;
+            OnNextProductSelected = null;
         }
 
-        public event Action<ResourceType> OnSellClicked;
-
-        public void Init(ResourcesInfo[] productsInfo)
+        public void SetCurrentResource(string resourceTitle, Sprite sprite)
         {
-            _productsInfo = productsInfo;
+            _productText.text = resourceTitle;
+            _productImage.sprite = sprite;
         }
 
-        public void Show(ResourceType[] availableProducts)
+        public void ClearCurrentResource()
         {
-            _availableProducts = availableProducts;
+            SetCurrentResource(null, null);
             _currentProductIndex = 0;
-
-            UpdateProductDisplay();
-
-            // Register button click handler
-            _sellButton.onClick.AddListener(HandleSellClicked);
         }
 
-        private void Start()
+        public void SetStartButtonState(bool value)
         {
-            gameObject.SetActive(showOnStart);
-        }
-
-        private void UpdateProductDisplay()
-        {
-            // Display the current product and its price
-            var currentProduct = _availableProducts[_currentProductIndex];
-            _currentResourcesInfo = GetProductInfo(currentProduct);
-
-            _productText.text = _currentResourcesInfo.Name;
-            _priceText.text = "Price: " + _currentResourcesInfo.Price;
+            _sellButton.interactable = value;
         }
 
         private void HandleSellClicked()
         {
-            OnSellClicked?.Invoke(_currentResourcesInfo.ResourceType);
-            NextProduct();
+            var selectedProduct = _availableProducts[_currentProductIndex];
+            OnSellClicked?.Invoke(selectedProduct);
+            SelectNextResource();
         }
 
-        private void NextProduct()
+        private void SelectNextResource()
         {
             _currentProductIndex = (_currentProductIndex + 1) % _availableProducts.Length;
-            UpdateProductDisplay();
-        }
 
-        private ResourcesInfo GetProductInfo(ResourceType ResourceType)
-        {
-            return _productsInfo.First(x => x.ResourceType == ResourceType);
+            var selectedProduct = _availableProducts[_currentProductIndex];
+            OnNextProductSelected?.Invoke(selectedProduct);
         }
 
         private void OnDestroy()
         {
-            _sellButton.onClick.RemoveListener(HandleSellClicked);
+            _sellButton.onClick.RemoveAllListeners();
+            _nextProductButton.onClick.RemoveAllListeners();
+            _closeButton.onClick.RemoveAllListeners();
         }
     }
 }
