@@ -1,42 +1,45 @@
 using System.Collections.Generic;
 using ProductionGame.Models;
-using TMPro;
+using ProductionGame.SO;
 using UnityEngine;
 
 namespace ProductionGame.UI
 {
     public interface IStorageView
     {
-        void UpdateCount(ResourceType resourceType, int count);
+        void UpdateCount(ResourcesInfo resourceInfo, int count);
     }
 
     public class StorageView : MonoBehaviour, IStorageView
     {
-        [SerializeField] private Transform _content;
-        [SerializeField] private TextMeshProUGUI _itemPrefab;
-        [SerializeField] private bool showOnStart;
+        [SerializeField] private RectTransform _resourceGroup;
+        [SerializeField] private ResourceStorageItemView _itemPrefab;
+        [SerializeField] private bool _showOnStart;
 
-        private readonly Dictionary<ResourceType, TextMeshProUGUI> _resourceTexts = new();
+        private Dictionary<ResourceType, ResourceStorageItemView> _items = new();
 
         private void Start()
         {
-            gameObject.SetActive(showOnStart);
+            _itemPrefab.gameObject.SetActive(false);
+            gameObject.SetActive(_showOnStart);
         }
 
-        public void UpdateCount(ResourceType resourceType, int count)
+        public void UpdateCount(ResourcesInfo resourceInfo, int count)
         {
-            if (!_resourceTexts.ContainsKey(resourceType))
-                CreateItem(resourceType);
+            if (!_items.ContainsKey(resourceInfo.ResourceType))
+                CreateItem(resourceInfo);
 
-            var resourceText = _resourceTexts[resourceType];
-            resourceText.text = $"{resourceType}: {count}";
+            var itemView = _items[resourceInfo.ResourceType];
+            itemView.SetCount(count);
         }
 
-        private void CreateItem(ResourceType resourceType)
+        private void CreateItem(ResourcesInfo resourceInfo)
         {
-            var item = Instantiate(_itemPrefab, _content);
-            item.text = $"{resourceType}: 0";
-            _resourceTexts[resourceType] = item;
+            var item = Instantiate(_itemPrefab, _resourceGroup);
+            item.SetSprite(resourceInfo.Sprite);
+            item.SetCount(1);
+            item.gameObject.SetActive(true);
+            _items[resourceInfo.ResourceType] = item;
         }
     }
 }

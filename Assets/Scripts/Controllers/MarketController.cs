@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ProductionGame.Infrastructure;
 using ProductionGame.Models;
@@ -16,12 +17,12 @@ namespace ProductionGame.UI
         private readonly IGameDataSaver _gameDataSaver;
         private readonly IMarketView _marketView;
         private readonly PlayerModel _playerModel;
-        private readonly ResourcesInfo[] _productsInfo;
+        private readonly Dictionary<ResourceType, ResourcesInfo> _productsInfo;
         private StorageModel _storageModel;
 
         public MarketController(IMarketView marketView,
             PlayerModel playerModel,
-            ResourcesInfo[] productsInfo,
+            Dictionary<ResourceType, ResourcesInfo> productsInfo,
             IGameDataSaver gameDataSaver)
         {
             _playerModel = playerModel;
@@ -38,7 +39,7 @@ namespace ProductionGame.UI
             _storageModel = storageModel;
             var availableProducts = _storageModel
                 .GetAvailableResources()
-                .Select(resource => _productsInfo.First(info => info.ResourceType == resource))
+                .Select(resource => _productsInfo[resource])
                 .Where(productInfo => productInfo.Price > 0)
                 .ToArray();
 

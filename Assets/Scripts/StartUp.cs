@@ -1,3 +1,4 @@
+using System.Linq;
 using ProductionGame.Controllers;
 using ProductionGame.Factories;
 using ProductionGame.Infrastructure;
@@ -26,15 +27,17 @@ namespace ProductionGame
             var storageModel = new StorageModel();
             var playerModel = new PlayerModel();
             var gameDataSaver = new GameDataSaver();
+
+            var gameResources = _gameSettings.ResourcesInfo.ToDictionary(key => key.ResourceType);
             var marketController =
-                new MarketController(_marketView, playerModel, _gameSettings.ResourcesInfo, gameDataSaver);
+                new MarketController(_marketView, playerModel, gameResources, gameDataSaver);
             var processingBuildingController =
                 new ProcessingBuildingController(_processingBuildingMenuView, storageModel);
-            var storageController = new StorageController(storageModel, _storageView, gameDataSaver);
+            var storageController = new StorageController(storageModel, _storageView, gameDataSaver, gameResources);
             var buildingFactory = new BuildingFactory(_gameSettings, storageController, _disposables, storageModel);
             var buildingsViewRepository = new BuildingsViewRepository();
             var resourceBuildingController =
-                new ResourceBuildingController(_resourceBuildingMenuView, _gameSettings.ResourcesInfo);
+                new ResourceBuildingController(_resourceBuildingMenuView, gameResources);
 
             var gameContext = new GameContext(playerModel, _gameSettings);
             var gameFactory = new GameFactory(gameContext, buildingFactory, resourceBuildingController,

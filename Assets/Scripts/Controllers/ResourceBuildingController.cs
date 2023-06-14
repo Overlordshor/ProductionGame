@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Collections.Generic;
 using ProductionGame.Models;
 using ProductionGame.SO;
 using ProductionGame.UI;
@@ -13,10 +13,10 @@ namespace ProductionGame.Controllers
     public class ResourceBuildingController : IResourceBuildingController
     {
         private readonly IResourceBuildingMenuView _resourceBuildingMenuView;
-        private readonly ResourcesInfo[] _resourcesInfo;
+        private readonly Dictionary<ResourceType, ResourcesInfo> _resourcesInfo;
 
         public ResourceBuildingController(IResourceBuildingMenuView resourceBuildingMenuView,
-            ResourcesInfo[] resourcesInfo)
+            Dictionary<ResourceType, ResourcesInfo> resourcesInfo)
         {
             _resourceBuildingMenuView = resourceBuildingMenuView;
             _resourcesInfo = resourcesInfo;
@@ -36,7 +36,7 @@ namespace ProductionGame.Controllers
             }
             else
             {
-                var info = GetResourcesInfo(resourceBuilding.ResourceType);
+                var info = _resourcesInfo[resourceBuilding.ResourceType];
                 _resourceBuildingMenuView.SetCurrentResource(info.Name, info.Sprite);
             }
 
@@ -46,16 +46,12 @@ namespace ProductionGame.Controllers
 
         private void SelectResource(ResourceBuildingModel resourceBuilding, ResourceType resourceType)
         {
-            var info = GetResourcesInfo(resourceBuilding.ResourceType);
+            var info = _resourcesInfo[resourceBuilding.ResourceType];
             resourceBuilding.SetCurrentResource(resourceType);
             _resourceBuildingMenuView.SetCurrentResource(info.Name, info.Sprite);
             _resourceBuildingMenuView.SetStartButtonState(!resourceBuilding.IsProductionActive);
         }
 
-        private ResourcesInfo GetResourcesInfo(ResourceType resourceType)
-        {
-            return _resourcesInfo.First(info => info.ResourceType == resourceType);
-        }
 
         private void StartProduction(ResourceBuildingModel resourceBuilding)
         {
