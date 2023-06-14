@@ -1,6 +1,7 @@
 using ProductionGame.Controllers;
 using ProductionGame.Models;
 using ProductionGame.Repositories;
+using ProductionGame.SO;
 using ProductionGame.UI;
 
 namespace ProductionGame.Factories
@@ -25,7 +26,8 @@ namespace ProductionGame.Factories
             IResourceBuildingController resourceBuildingController,
             IBuildingsViewRepository buildingsViewRepository,
             IProcessingBuildingController processingBuildingController,
-            IMarketController marketController)
+            IMarketController marketController,
+            GameSettings gameSettings)
         {
             _gameContext = gameContext;
             _buildingFactory = buildingFactory;

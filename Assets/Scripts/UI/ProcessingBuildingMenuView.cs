@@ -14,6 +14,8 @@ namespace ProductionGame.UI
         event Action OnStopClicked;
         void Show();
         void SetStartButtonState(bool isActive);
+        void SetCurrentCraftView(Sprite[] resourceSprites, Sprite productSprite);
+        void SetActiveStartButton(bool isEnable);
     }
 
     public class ProcessingBuildingMenuView : MonoBehaviour, IProcessingBuildingMenuView, IDisposable
@@ -22,7 +24,6 @@ namespace ProductionGame.UI
         public event Action<ResourceType, ResourceType> OnResourcesSelected;
         public event Action OnStopClicked;
 
-        [SerializeField] private Text _resourceTypeText;
         [SerializeField] private bool _showOnStart;
         [SerializeField] private Button _resource1Button;
         [SerializeField] private Button _resource2Button;
@@ -36,7 +37,6 @@ namespace ProductionGame.UI
 
         private bool isStart;
         private ResourceType[] _resourceTypes;
-        private ResourceType[] _productsTypes;
 
         private int[] _currentResourceIndexes = { 0, 0 };
 
@@ -65,13 +65,6 @@ namespace ProductionGame.UI
                 ResourceType.Iron
             };
 
-            _productsTypes = new[]
-            {
-                ResourceType.Drills,
-                ResourceType.Forks,
-                ResourceType.Hammers
-            };
-
             gameObject.SetActive(_showOnStart);
         }
 
@@ -95,6 +88,11 @@ namespace ProductionGame.UI
             _resource1Image.sprite = resourceSprites.First();
             _resource2Image.sprite = resourceSprites.Last();
             _productImage.sprite = productSprite;
+        }
+
+        public void SetActiveStartButton(bool isEnable)
+        {
+            _startAndStopButton.interactable = isEnable;
         }
 
         public void Dispose()
@@ -123,12 +121,6 @@ namespace ProductionGame.UI
             OnResourcesSelected?.Invoke(resource1, resource2);
         }
 
-        public void ClearCurrentResource()
-        {
-            SetCurrentCraftView(new Sprite[] { null, null }, null);
-            _currentResourceIndexes = new[] { 0, 0 };
-        }
-
         private void HandleStartClicked()
         {
             var resource1 = _resourceTypes[_currentResourceIndexes[0]];
@@ -144,6 +136,7 @@ namespace ProductionGame.UI
         private void OnDestroy()
         {
             _startAndStopButton.onClick.RemoveAllListeners();
+            _closeButton.onClick.RemoveAllListeners();
         }
     }
 }

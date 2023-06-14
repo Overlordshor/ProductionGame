@@ -15,7 +15,8 @@ namespace ProductionGame.Models
 
         public bool IsProductionActive { get; private set; }
         public ResourceType ResourceType1 => _craft?.Resources[0] ?? ResourceType.None;
-        public ResourceType ResourceType2 => _craft?.Resources[0] ?? ResourceType.None;
+        public ResourceType ResourceType2 => _craft?.Resources[1] ?? ResourceType.None;
+        public ResourceType ProductType => _craft?.Product ?? ResourceType.None;
 
         public ProcessingBuildingModel(float productionInterval, StorageModel storageModel)
         {
@@ -30,7 +31,7 @@ namespace ProductionGame.Models
 
         public async Task StartProductionAsync()
         {
-            if (IsProductionActive || _craft.Product == ResourceType.None)
+            if (IsProductionActive || ProductType == ResourceType.None)
                 return;
 
             IsProductionActive = true;
@@ -41,7 +42,7 @@ namespace ProductionGame.Models
 
         public void StopProduction()
         {
-            IsProductionActive = _storageModel.HasResource(_craft.Resources);
+            IsProductionActive = false;
         }
 
         private async Task ProduceProductsAsync()

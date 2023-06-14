@@ -32,7 +32,7 @@ namespace ProductionGame
             var marketController =
                 new MarketController(_marketView, playerModel, gameResources, gameDataSaver);
             var processingBuildingController =
-                new ProcessingBuildingController(_processingBuildingMenuView, storageModel);
+                new ProcessingBuildingController(_processingBuildingMenuView, storageModel, gameResources);
             var storageController = new StorageController(storageModel, _storageView, gameDataSaver, gameResources);
             var buildingFactory = new BuildingFactory(_gameSettings, storageController, _disposables, storageModel);
             var buildingsViewRepository = new BuildingsViewRepository();
@@ -41,7 +41,7 @@ namespace ProductionGame
 
             var gameContext = new GameContext(playerModel, _gameSettings);
             var gameFactory = new GameFactory(gameContext, buildingFactory, resourceBuildingController,
-                buildingsViewRepository, processingBuildingController, marketController);
+                buildingsViewRepository, processingBuildingController, marketController, _gameSettings);
             var mainMenuController =
                 new MainMenuController(gameContext, _mainMenuView, _victoryWindowView, gameFactory);
 

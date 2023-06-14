@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,6 +15,9 @@ namespace ProductionGame.Models
 
         public void Add(ResourceType resourceType, int count)
         {
+            if (resourceType == ResourceType.None)
+                throw new ArgumentOutOfRangeException();
+
             if (_resourceCounts.ContainsKey(resourceType))
                 _resourceCounts[resourceType] += count;
             else
@@ -29,6 +33,9 @@ namespace ProductionGame.Models
 
         public void Remove(ResourceType resourceType)
         {
+            if (resourceType == ResourceType.None)
+                throw new ArgumentOutOfRangeException();
+
             if (_resourceCounts.ContainsKey(resourceType))
                 _resourceCounts[resourceType]--;
         }
