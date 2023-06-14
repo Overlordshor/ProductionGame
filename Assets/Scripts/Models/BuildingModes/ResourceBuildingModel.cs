@@ -1,7 +1,5 @@
 using System;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
 namespace ProductionGame.Models
 {
@@ -48,11 +46,8 @@ namespace ProductionGame.Models
         {
             while (IsProductionActive)
             {
-                Debug.Log($"Start {nameof(ProduceResourcesAsync)} {ResourceType}");
                 await UniTask.Delay(TimeSpan.FromSeconds(_productionInterval));
-
                 OnResourceProduced?.Invoke(ResourceType);
-                Debug.Log($"End {nameof(ProduceResourcesAsync)} {ResourceType}");
             }
         }
 

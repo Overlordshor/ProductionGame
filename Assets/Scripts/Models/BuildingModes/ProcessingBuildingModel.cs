@@ -1,6 +1,5 @@
 using System;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
 namespace ProductionGame.Models
 {
@@ -59,17 +58,13 @@ namespace ProductionGame.Models
         private async UniTask ProduceProductsAsync()
         {
             while (IsProductionActive
-                   && !_storageModel.HasResource(_craft.Resources))
+                   && _storageModel.HasResource(_craft.Resources))
             {
-                Debug.Log(
-                    $"Start {nameof(ProduceProductsAsync)} {ProductType} from {ResourceType1} and {ResourceType2}");
                 await UniTask.Delay(TimeSpan.FromSeconds(_productionInterval));
-
 
                 OnResourcesConsumed?.Invoke(ResourceType1);
                 OnResourcesConsumed?.Invoke(ResourceType2);
                 OnProductProduced?.Invoke(ProductType);
-                Debug.Log($"End {nameof(ProduceProductsAsync)} {ProductType} from {ResourceType1} and {ResourceType2}");
             }
         }
     }

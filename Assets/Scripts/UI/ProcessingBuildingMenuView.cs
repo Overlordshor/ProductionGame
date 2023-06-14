@@ -11,7 +11,6 @@ namespace ProductionGame.UI
     {
         event Action<ResourceType, ResourceType> OnStartClicked;
         event Action<ResourceType, ResourceType> OnResourcesSelected;
-        event Action OnStopClicked;
         void Show();
         void SetStartButtonState(bool isActive);
         void SetCurrentCraftView(Sprite[] resourceSprites, Sprite productSprite);
@@ -22,7 +21,6 @@ namespace ProductionGame.UI
     {
         public event Action<ResourceType, ResourceType> OnStartClicked;
         public event Action<ResourceType, ResourceType> OnResourcesSelected;
-        public event Action OnStopClicked;
 
         [SerializeField] private bool _showOnStart;
         [SerializeField] private Button _resource1Button;
@@ -49,12 +47,9 @@ namespace ProductionGame.UI
             _resource2Button.onClick.AddListener(SelectSecondResource);
             _startAndStopButton.onClick.AddListener(() =>
             {
-                if (!isStart)
-                    HandleStartClicked();
-                else
-                    HandleStopClicked();
-
-                isStart = !isStart;
+                var resource1 = _resourceTypes[_currentResourceIndexes[0]];
+                var resource2 = _resourceTypes[_currentResourceIndexes[1]];
+                OnStartClicked?.Invoke(resource1, resource2);
             });
 
             _resourceTypes = new[]
@@ -99,7 +94,6 @@ namespace ProductionGame.UI
         {
             OnResourcesSelected = null;
             OnStartClicked = null;
-            OnStopClicked = null;
         }
 
         private void SelectSecondResource()
@@ -121,17 +115,6 @@ namespace ProductionGame.UI
             OnResourcesSelected?.Invoke(resource1, resource2);
         }
 
-        private void HandleStartClicked()
-        {
-            var resource1 = _resourceTypes[_currentResourceIndexes[0]];
-            var resource2 = _resourceTypes[_currentResourceIndexes[1]];
-            OnStartClicked?.Invoke(resource1, resource2);
-        }
-
-        private void HandleStopClicked()
-        {
-            OnStopClicked?.Invoke();
-        }
 
         private void OnDestroy()
         {
