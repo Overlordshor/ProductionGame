@@ -12,6 +12,7 @@ namespace ProductionGame.Infrastructure
         public void ChangeCoins(int coins);
         void Change(ResourceType resourceType, int count);
         void SaveChanges();
+        void Reset();
     }
 
     public class GameDataSaver : IGameDataSaver
@@ -43,6 +44,12 @@ namespace ProductionGame.Infrastructure
         {
             var json = JsonConvert.SerializeObject(_currentGameData);
             PlayerPrefs.SetString(nameof(GameData), json);
+            PlayerPrefs.Save();
+        }
+
+        public void Reset()
+        {
+            PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
         }
     }

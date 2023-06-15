@@ -1,7 +1,9 @@
 using System;
 using ProductionGame.Factories;
+using ProductionGame.Infrastructure;
 using ProductionGame.Models;
 using ProductionGame.UI;
+using UnityEngine.SceneManagement;
 
 namespace ProductionGame.Controllers
 {
@@ -9,22 +11,25 @@ namespace ProductionGame.Controllers
     {
         private readonly GameContext _gameContext;
         private readonly IGameFactory _gameFactory;
+        private readonly IGameDataSaver _gameDataSaver;
         private readonly IMainMenuView _mainMenuView;
         private readonly IVictoryWindowView _victoryWindowView;
 
         public MainMenuController(GameContext gameContext,
             IMainMenuView mainMenuView,
             IVictoryWindowView victoryWindowView,
-            IGameFactory gameFactory)
+            IGameFactory gameFactory,
+            IGameDataSaver gameDataSaver)
         {
             _gameContext = gameContext;
             _mainMenuView = mainMenuView;
             _gameFactory = gameFactory;
+            _gameDataSaver = gameDataSaver;
             _mainMenuView.OnStartGameClicked += StartGame;
             _mainMenuView.OnBuildCountSelected += SelectBuildCount;
 
             _victoryWindowView = victoryWindowView;
-            _victoryWindowView.OnMainMenuClicked += ShowMainMenuView;
+            _victoryWindowView.OnMainMenuClicked += Restart;
 
             _gameContext.OnGameWon += ShowVictoryWindow;
 
@@ -35,14 +40,20 @@ namespace ProductionGame.Controllers
         {
             _mainMenuView.OnBuildCountSelected -= SelectBuildCount;
             _mainMenuView.OnStartGameClicked -= StartGame;
-            _victoryWindowView.OnMainMenuClicked -= ShowMainMenuView;
+            _victoryWindowView.OnMainMenuClicked -= Restart;
             _gameContext.OnGameWon -= ShowVictoryWindow;
         }
-
 
         public void ShowMainMenuView()
         {
             _mainMenuView.Show();
+        }
+
+        public void Restart()
+        {
+            _gameDataSaver.Reset();
+            var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene(currentSceneIndex);
         }
 
         private void ShowVictoryWindow()

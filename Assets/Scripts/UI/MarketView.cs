@@ -80,19 +80,19 @@ namespace ProductionGame.UI
 
         public void RemoveUnavailableProducts(IEnumerable<ResourceType> unavailableProducts)
         {
-            var count = _availableProducts.RemoveAll(resourcesInfo =>
-                unavailableProducts.Contains(resourcesInfo.ResourceType));
+            var count = _availableProducts
+                .RemoveAll(resourcesInfo => unavailableProducts
+                    .Contains(resourcesInfo.ResourceType));
             if (count == 0)
                 return;
 
-            SelectNextResource();
+            ClearCurrentResource();
         }
 
         private void HandleSellClicked()
         {
             var selectedProduct = _availableProducts[_currentProductIndex];
             OnSellClicked?.Invoke(selectedProduct);
-            SelectNextResource();
         }
 
         private void SelectNextResource()

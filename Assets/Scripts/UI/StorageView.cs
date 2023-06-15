@@ -9,6 +9,7 @@ namespace ProductionGame.UI
     {
         void UpdateCount(ResourcesInfo resourceInfo, int count);
         void UpdateCoinCount(int count);
+        void Clear();
     }
 
     public class StorageView : MonoBehaviour, IStorageView
@@ -30,6 +31,14 @@ namespace ProductionGame.UI
         public void UpdateCoinCount(int count)
         {
             _coinView.SetCount(count);
+        }
+
+        public void Clear()
+        {
+            foreach (var itemView in _items.Values)
+                Destroy(itemView);
+
+            _items.Clear();
         }
 
         public void UpdateCount(ResourcesInfo resourceInfo, int count)

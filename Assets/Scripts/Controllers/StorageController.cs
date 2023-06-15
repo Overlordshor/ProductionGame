@@ -40,6 +40,7 @@ namespace ProductionGame.Controllers
         public void ApplyResource()
         {
             _storageView.UpdateCoinCount(_playerModel.Coins);
+            _storageView.Clear();
             foreach (var availableResource in _storageModel.GetAvailableResources())
                 UpdateResourcesCount(availableResource);
         }

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e3692243f19a704ba55757faa1eb981, type: 3}
   m_Name: ProcessingBuildingSettings
   m_EditorClassIdentifier: 
-  _productionInterval: 10
+  _productionInterval: 5
   _buildingPrefab: {fileID: 847137834875863971, guid: ffc173a8b437ee94fabd4274b62a0bda, type: 3}
   _buildingPosition: {x: -35.02, y: 2.02678, z: -32.9}
