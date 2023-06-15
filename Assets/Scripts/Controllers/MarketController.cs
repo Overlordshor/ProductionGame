@@ -22,10 +22,12 @@ namespace ProductionGame.UI
 
         public MarketController(IMarketView marketView,
             PlayerModel playerModel,
+            StorageModel storageModel,
             Dictionary<ResourceType, ResourcesInfo> productsInfo,
             IGameDataSaver gameDataSaver)
         {
             _playerModel = playerModel;
+            _storageModel = storageModel;
             _productsInfo = productsInfo;
             _gameDataSaver = gameDataSaver;
 
@@ -36,21 +38,30 @@ namespace ProductionGame.UI
 
         public void ShowMarket(StorageModel storageModel)
         {
-            _storageModel = storageModel;
-            var availableProducts = _storageModel
-                .GetAvailableResources()
-                .Select(resource => _productsInfo[resource])
-                .Where(productInfo => productInfo.Price > 0)
-                .ToArray();
-
             _marketView.ClearCurrentResource();
-            _marketView.Show(availableProducts);
-            _marketView.SetActiveSellButton(availableProducts.Any());
+            SetUpMarketView();
+
+            _storageModel.OnResourcesChanged += UpdateAvailableProducts;
+            _marketView.OnClosed += UnsubscribeUpdate;
+            _marketView.Show();
+
+            void UpdateAvailableProducts(ResourceType resourceType)
+            {
+                SetUpMarketView();
+            }
+
+            void UnsubscribeUpdate()
+            {
+                _marketView.OnClosed -= UnsubscribeUpdate;
+                _storageModel.OnResourcesChanged -= UpdateAvailableProducts;
+            }
         }
+
 
         public void Dispose()
         {
             _marketView.OnSellClicked -= SellProduct;
+            _marketView.OnNextProductSelected -= SelectProduct;
         }
 
         private void SelectProduct(ResourcesInfo productInfo)
@@ -69,11 +80,26 @@ namespace ProductionGame.UI
 
             var unavailableProducts = _storageModel.GetUnavailableProducts();
             _marketView.RemoveUnavailableProducts(unavailableProducts);
-            _marketView.SetActiveSellButton(_storageModel.GetCount(productInfo.ResourceType) > 0);
+            var hasProducts = _storageModel.GetCount(productInfo.ResourceType) > 0;
+            _marketView.SetActiveSellButton(hasProducts);
+            if (!hasProducts)
+                _marketView.ClearCurrentResource();
 
             _gameDataSaver.ChangeCoins(_playerModel.Coins);
             _gameDataSaver.Change(productInfo.ResourceType, _storageModel.GetCount(productInfo.ResourceType));
             _gameDataSaver.SaveChanges();
+        }
+
+        private void SetUpMarketView()
+        {
+            var availableProducts = _storageModel
+                .GetAvailableResources()
+                .Select(resource => _productsInfo[resource])
+                .Where(productInfo => productInfo.Price > 0)
+                .ToArray();
+
+            _marketView.SetProducts(availableProducts);
+            _marketView.SetActiveSellButton(availableProducts.Any());
         }
     }
 }

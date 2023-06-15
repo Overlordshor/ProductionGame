@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using ProductionGame.Models;
@@ -11,7 +12,7 @@ namespace ProductionGame.Controllers
         void ShowResourceBuildingWindow(ResourceBuildingModel resourceBuilding);
     }
 
-    public class ResourceBuildingController : IResourceBuildingController
+    public class ResourceBuildingController : IResourceBuildingController, IDisposable
     {
         private readonly IResourceBuildingMenuView _resourceBuildingMenuView;
         private readonly Dictionary<ResourceType, ResourcesInfo> _resourcesInfo;
@@ -63,6 +64,12 @@ namespace ProductionGame.Controllers
                 resourceBuilding.StartProductionAsync().Forget();
 
             _resourceBuildingMenuView.SetStartButtonState(resourceBuilding.IsProductionActive);
+        }
+
+        public void Dispose()
+        {
+            _resourceBuildingMenuView.OnNextResourceSelected -= SelectResource;
+            _resourceBuildingMenuView.OnStartClicked -= StartOrStopProduction;
         }
     }
 }

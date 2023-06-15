@@ -12,7 +12,7 @@ namespace ProductionGame.Controllers
         void ShowProcessingBuildingWindow(ProcessingBuildingModel processingBuilding);
     }
 
-    public class ProcessingBuildingController : IProcessingBuildingController
+    public class ProcessingBuildingController : IProcessingBuildingController, IDisposable
     {
         private readonly IProcessingBuildingMenuView _processingBuildingMenuView;
         private readonly Dictionary<ResourceType, ResourcesInfo> _resourcesInfo;
@@ -30,6 +30,7 @@ namespace ProductionGame.Controllers
 
             _processingBuildingMenuView.OnStartClicked += StartOrStopProduction;
             _processingBuildingMenuView.OnResourcesSelected += SelectResource;
+            _storageModel.OnResourcesChanged += UpdateState;
         }
 
         public void ShowProcessingBuildingWindow(ProcessingBuildingModel processingBuilding)
@@ -79,16 +80,19 @@ namespace ProductionGame.Controllers
             }
 
             UpdateStartButton();
-
-            void UpdateState(ResourceType resourceType)
-            {
-                if (!_storageModel.HasResource(resourceType))
-                    _processingBuilding.StopProduction();
-
-                UpdateStartButton();
-            }
         }
 
+        private void UpdateState(ResourceType resourceType)
+        {
+            if (_processingBuilding == null)
+                return;
+
+            if (_processingBuilding.ProductType != resourceType
+                && !_storageModel.HasResource(resourceType))
+                _processingBuilding.StopProduction();
+
+            UpdateStartButton();
+        }
 
         private void UpdateStartButton()
         {
@@ -100,6 +104,16 @@ namespace ProductionGame.Controllers
                                                                  ResourceType.None);
 
             _processingBuildingMenuView.SetStartButtonState(_processingBuilding.IsProductionActive);
+        }
+
+        public void Dispose()
+        {
+            _processingBuildingMenuView.OnStartClicked -= StartOrStopProduction;
+            _processingBuildingMenuView.OnResourcesSelected -= SelectResource;
+            _storageModel.OnResourcesChanged -= UpdateState;
+
+            if (_processingBuilding != null)
+                _processingBuilding.OnResourcesConsumed -= UpdateState;
         }
     }
 }

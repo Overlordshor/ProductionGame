@@ -13,17 +13,20 @@ namespace ProductionGame.UI
     {
         event Action<ResourcesInfo> OnSellClicked;
         event Action<ResourcesInfo> OnNextProductSelected;
-        void Show(ResourcesInfo[] availableProducts);
+        event Action OnClosed;
+        void Show();
         void SetCurrentProduct(string resourceTitle, int price, Sprite sprite);
         void ClearCurrentResource();
         void SetActiveSellButton(bool value);
         void RemoveUnavailableProducts(IEnumerable<ResourceType> unavailableProducts);
+        void SetProducts(ResourcesInfo[] availableProducts);
     }
 
     public class MarketView : View, IMarketView, IDisposable
     {
         public event Action<ResourcesInfo> OnSellClicked;
         public event Action<ResourcesInfo> OnNextProductSelected;
+        public event Action OnClosed;
 
         [SerializeField] private Button _nextProductButton;
         [SerializeField] private TextMeshProUGUI _productText;
@@ -46,15 +49,19 @@ namespace ProductionGame.UI
             _sellButton.onClick.AddListener(HandleSellClicked);
         }
 
+        public void Show()
+        {
+            gameObject.SetActive(true);
+        }
 
-        public void Show(ResourcesInfo[] availableProducts)
+        public void SetProducts(ResourcesInfo[] availableProducts)
         {
             _availableProducts = availableProducts.ToList();
-            gameObject.SetActive(true);
         }
 
         public void Dispose()
         {
+            OnClosed = null;
             OnSellClicked = null;
             OnNextProductSelected = null;
         }
@@ -87,6 +94,12 @@ namespace ProductionGame.UI
                 return;
 
             ClearCurrentResource();
+        }
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            OnClosed?.Invoke();
         }
 
         private void HandleSellClicked()

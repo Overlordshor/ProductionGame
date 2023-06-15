@@ -31,7 +31,7 @@ namespace ProductionGame
 
             var gameResources = _gameSettings.ResourcesInfo.ToDictionary(key => key.ResourceType);
             var marketController =
-                new MarketController(_marketView, playerModel, gameResources, gameDataSaver);
+                new MarketController(_marketView, playerModel, storageModel, gameResources, gameDataSaver);
             var processingBuildingController =
                 new ProcessingBuildingController(_processingBuildingMenuView, storageModel, gameResources);
             var storageController =
@@ -63,6 +63,8 @@ namespace ProductionGame
             _disposables.Add(gameContext);
             _disposables.Add(storageController);
             _disposables.Add(storageModel);
+            _disposables.Add(processingBuildingController);
+            _disposables.Add(resourceBuildingController);
         }
 
         private void OnDestroy()

@@ -26,7 +26,7 @@ namespace ProductionGame.UI
                 _blockInput.enabled = true;
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             if (_blockInput == null)
                 return;
