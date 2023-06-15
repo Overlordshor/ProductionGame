@@ -44,7 +44,6 @@ namespace ProductionGame.Controllers
         {
             _processingBuilding.SetResourceTypes(resource1Type, resource2Type);
 
-
             var resource1Info = GetResourceInfo(_processingBuilding.ResourceType1);
             var resource2Info = GetResourceInfo(_processingBuilding.ResourceType2);
             var productInfo = GetResourceInfo(_processingBuilding.ProductType);
@@ -53,7 +52,16 @@ namespace ProductionGame.Controllers
             _processingBuildingMenuView.SetCurrentCraftView(new[] { resource1Info?.Sprite, resource2Info?.Sprite },
                 productInfo?.Sprite);
 
+            if (_processingBuilding.ProductType == ResourceType.None)
+                StopProcess();
+
             UpdateStartButton();
+        }
+
+        private void StopProcess()
+        {
+            _processingBuilding.OnResourcesConsumed -= UpdateState;
+            _processingBuilding.StopProduction();
         }
 
         private ResourcesInfo GetResourceInfo(ResourceType resourceType)

@@ -79,12 +79,12 @@ namespace ProductionGame.UI
         public void ClearCurrentResource()
         {
             SetCurrentProduct(null, 0, null);
-            _currentProductIndex = 0;
+            _currentProductIndex = -1;
         }
 
         public void SetActiveSellButton(bool value)
         {
-            _sellButton.interactable = value;
+            _sellButton.interactable = value && _currentProductIndex >= 0;
         }
 
         public void RemoveUnavailableProducts(IEnumerable<ResourceType> unavailableProducts)

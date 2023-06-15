@@ -45,7 +45,7 @@ namespace ProductionGame.Models
 
         public void StopProduction()
         {
-            _ctx.Cancel();
+            _ctx?.Cancel();
             IsProductionActive = false;
         }
 
