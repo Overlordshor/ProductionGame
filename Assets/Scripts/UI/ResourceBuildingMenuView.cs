@@ -31,11 +31,13 @@ namespace ProductionGame.UI
         private ResourceBuildingModel _resourceBuilding;
         private ResourceType[] _resourceTypes;
         private int _currentResourceIndex;
+        private Sprite _defaultSprite;
 
 
         protected override void OnStart()
         {
             _resourceImage = _nextResourceButton.GetComponent<Image>();
+            _defaultSprite = _resourceImage.sprite;
             _startAndStopButton.onClick.AddListener(() => OnStartClicked?.Invoke(_resourceBuilding));
             _nextResourceButton.onClick.AddListener(SelectNextResource);
             _closeButton.onClick.AddListener(() => gameObject.SetActive(false));
@@ -72,7 +74,7 @@ namespace ProductionGame.UI
         public void SetCurrentResource(string resourceTitle, Sprite sprite)
         {
             _resourceText.text = resourceTitle;
-            _resourceImage.sprite = sprite;
+            _resourceImage.sprite = sprite ?? _defaultSprite;
         }
 
         public void ClearCurrentResource()

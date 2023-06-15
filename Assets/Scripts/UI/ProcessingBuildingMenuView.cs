@@ -35,11 +35,14 @@ namespace ProductionGame.UI
         private ResourceType[] _resourceTypes;
 
         private int[] _currentResourceIndexes = { 0, 0 };
+        private Sprite _defaultSprite;
 
         protected override void OnStart()
         {
             _resource1Image = _resource1Button.GetComponent<Image>();
             _resource2Image = _resource2Button.GetComponent<Image>();
+
+            _defaultSprite = _resource1Image.sprite;
 
             _resource1Button.onClick.AddListener(SelectFirstResource);
             _resource2Button.onClick.AddListener(SelectSecondResource);
@@ -77,9 +80,9 @@ namespace ProductionGame.UI
 
         public void SetCurrentCraftView(Sprite[] resourceSprites, Sprite productSprite)
         {
-            _resource1Image.sprite = resourceSprites.First();
-            _resource2Image.sprite = resourceSprites.Last();
-            _productImage.sprite = productSprite;
+            _resource1Image.sprite = resourceSprites.First() ?? _defaultSprite;
+            _resource2Image.sprite = resourceSprites.Last() ?? _defaultSprite;
+            _productImage.sprite = productSprite ?? _defaultSprite;
         }
 
         public void SetActiveStartButton(bool isEnable)

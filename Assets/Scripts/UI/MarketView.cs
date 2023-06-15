@@ -37,14 +37,16 @@ namespace ProductionGame.UI
 
         private List<ResourcesInfo> _availableProducts;
         private int _currentProductIndex;
+        private Sprite _defaultSprite;
 
         protected override void OnStart()
         {
             _productImage = _nextProductButton.GetComponent<Image>();
+            _defaultSprite = _productImage.sprite;
+
             _nextProductButton.onClick.AddListener(SelectNextResource);
             _closeButton.onClick.AddListener(() => gameObject.SetActive(false));
 
-            _productImage = _nextProductButton.GetComponent<Image>();
 
             _sellButton.onClick.AddListener(HandleSellClicked);
         }
@@ -69,7 +71,7 @@ namespace ProductionGame.UI
         public void SetCurrentProduct(string title, int price, Sprite sprite)
         {
             _productText.text = title;
-            _productImage.sprite = sprite;
+            _productImage.sprite = sprite ?? _defaultSprite;
             _priceText.text = price.ToString();
             _priceText.gameObject.SetActive(price > 0);
         }
