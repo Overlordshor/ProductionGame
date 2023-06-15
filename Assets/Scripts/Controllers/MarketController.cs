@@ -45,6 +45,7 @@ namespace ProductionGame.UI
 
             _marketView.ClearCurrentResource();
             _marketView.Show(availableProducts);
+            _marketView.SetActiveSellButton(availableProducts.Any());
         }
 
         public void Dispose()
@@ -54,8 +55,8 @@ namespace ProductionGame.UI
 
         private void SelectProduct(ResourcesInfo productInfo)
         {
-            _marketView.SetCurrentResource(productInfo.Name, productInfo.Sprite);
-            _marketView.SetStartButtonState(_storageModel.GetCount(productInfo.ResourceType) > 0);
+            _marketView.SetCurrentProduct(productInfo.Name, productInfo.Price, productInfo.Sprite);
+            _marketView.SetActiveSellButton(_storageModel.GetCount(productInfo.ResourceType) > 0);
         }
 
         private void SellProduct(ResourcesInfo productInfo)
@@ -65,6 +66,10 @@ namespace ProductionGame.UI
 
             _storageModel.Remove(productInfo.ResourceType);
             _playerModel.AddCoins(productInfo.Price);
+
+            var unavailableProducts = _storageModel.GetUnavailableProducts();
+            _marketView.RemoveUnavailableProducts(unavailableProducts);
+            _marketView.SetActiveSellButton(_storageModel.GetCount(productInfo.ResourceType) > 0);
 
             _gameDataSaver.ChangeCoins(_playerModel.Coins);
             _gameDataSaver.Change(productInfo.ResourceType, _storageModel.GetCount(productInfo.ResourceType));

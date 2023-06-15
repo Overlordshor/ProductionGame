@@ -34,7 +34,9 @@ namespace ProductionGame
                 new MarketController(_marketView, playerModel, gameResources, gameDataSaver);
             var processingBuildingController =
                 new ProcessingBuildingController(_processingBuildingMenuView, storageModel, gameResources);
-            var storageController = new StorageController(storageModel, _storageView, gameDataSaver, gameResources);
+            var storageController =
+                new StorageController(playerModel, storageModel, _storageView, gameDataSaver, gameResources);
+
             var buildingFactory = new BuildingFactory(_gameSettings, storageController, _disposables, storageModel);
             var buildingsViewRepository = new BuildingsViewRepository();
             var resourceBuildingController =
@@ -58,6 +60,7 @@ namespace ProductionGame
             _disposables.Add(marketController);
             _disposables.Add(_victoryWindowView);
             _disposables.Add(gameContext);
+            _disposables.Add(storageController);
         }
 
         private void OnDestroy()

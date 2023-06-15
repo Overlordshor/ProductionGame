@@ -47,6 +47,13 @@ namespace ProductionGame.Models
                 .Select(product => product.Key);
         }
 
+        public IEnumerable<ResourceType> GetUnavailableProducts()
+        {
+            return _resourceCounts
+                .Where(product => product.Value <= 0)
+                .Select(product => product.Key);
+        }
+
         public bool HasResource(params ResourceType[] resources)
         {
             return resources.All(resource => GetCount(resource) > 0);

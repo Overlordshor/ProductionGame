@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ProductionGame.Infrastructure;
 using ProductionGame.Models;
@@ -12,22 +13,27 @@ namespace ProductionGame.Controllers
         void Remove(ResourceType resourceType);
     }
 
-    public class StorageController : IStorageController
+    public class StorageController : IStorageController, IDisposable
     {
         private readonly IGameDataSaver _gameDataSaver;
         private readonly Dictionary<ResourceType, ResourcesInfo> _resourcesInfo;
+        private readonly PlayerModel _playerModel;
         private readonly StorageModel _storageModel;
         private readonly IStorageView _storageView;
 
-        public StorageController(StorageModel storageModel,
+        public StorageController(PlayerModel playerModel,
+            StorageModel storageModel,
             IStorageView storageView,
             IGameDataSaver gameDataSaver,
             Dictionary<ResourceType, ResourcesInfo> resourcesInfo)
         {
+            _playerModel = playerModel;
             _storageModel = storageModel;
             _storageView = storageView;
             _gameDataSaver = gameDataSaver;
             _resourcesInfo = resourcesInfo;
+
+            _playerModel.OnCoinsChanged += _storageView.UpdateCoinCount;
         }
 
         public void Add(ResourceType resourceType)
@@ -46,6 +52,11 @@ namespace ProductionGame.Controllers
 
             _gameDataSaver.Change(resourceType, _storageModel.GetCount(resourceType));
             _gameDataSaver.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            _playerModel.OnCoinsChanged -= _storageView.UpdateCoinCount;
         }
     }
 }

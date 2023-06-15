@@ -69,15 +69,24 @@ namespace ProductionGame.Controllers
                 if (!_storageModel.HasResource(_processingBuilding.ResourceType1, _processingBuilding.ResourceType2))
                     throw new InvalidOperationException("Insufficient resources to start production.");
 
+                _processingBuilding.OnResourcesConsumed += UpdateState;
                 _processingBuilding.StartProductionAsync().Forget();
             }
             else
             {
+                _processingBuilding.OnResourcesConsumed -= UpdateState;
                 _processingBuilding.StopProduction();
             }
 
-
             UpdateStartButton();
+
+            void UpdateState(ResourceType resourceType)
+            {
+                if (!_storageModel.HasResource(resourceType))
+                    _processingBuilding.StopProduction();
+
+                UpdateStartButton();
+            }
         }
 
 

@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using ProductionGame.Models;
 using ProductionGame.SO;
 using TMPro;
 using UnityEngine;
@@ -11,9 +14,10 @@ namespace ProductionGame.UI
         event Action<ResourcesInfo> OnSellClicked;
         event Action<ResourcesInfo> OnNextProductSelected;
         void Show(ResourcesInfo[] availableProducts);
-        void SetCurrentResource(string resourceTitle, Sprite sprite);
+        void SetCurrentProduct(string resourceTitle, int price, Sprite sprite);
         void ClearCurrentResource();
-        void SetStartButtonState(bool value);
+        void SetActiveSellButton(bool value);
+        void RemoveUnavailableProducts(IEnumerable<ResourceType> unavailableProducts);
     }
 
     public class MarketView : View, IMarketView, IDisposable
@@ -28,7 +32,7 @@ namespace ProductionGame.UI
         [SerializeField] private Button _closeButton;
         private Image _productImage;
 
-        private ResourcesInfo[] _availableProducts;
+        private List<ResourcesInfo> _availableProducts;
         private int _currentProductIndex;
 
         protected override void OnStart()
@@ -45,7 +49,7 @@ namespace ProductionGame.UI
 
         public void Show(ResourcesInfo[] availableProducts)
         {
-            _availableProducts = availableProducts;
+            _availableProducts = availableProducts.ToList();
             gameObject.SetActive(true);
         }
 
@@ -55,21 +59,33 @@ namespace ProductionGame.UI
             OnNextProductSelected = null;
         }
 
-        public void SetCurrentResource(string resourceTitle, Sprite sprite)
+        public void SetCurrentProduct(string title, int price, Sprite sprite)
         {
-            _productText.text = resourceTitle;
+            _productText.text = title;
             _productImage.sprite = sprite;
+            _priceText.text = price.ToString();
+            _priceText.gameObject.SetActive(price > 0);
         }
 
         public void ClearCurrentResource()
         {
-            SetCurrentResource(null, null);
+            SetCurrentProduct(null, 0, null);
             _currentProductIndex = 0;
         }
 
-        public void SetStartButtonState(bool value)
+        public void SetActiveSellButton(bool value)
         {
             _sellButton.interactable = value;
+        }
+
+        public void RemoveUnavailableProducts(IEnumerable<ResourceType> unavailableProducts)
+        {
+            var count = _availableProducts.RemoveAll(resourcesInfo =>
+                unavailableProducts.Contains(resourcesInfo.ResourceType));
+            if (count == 0)
+                return;
+
+            SelectNextResource();
         }
 
         private void HandleSellClicked()
@@ -81,7 +97,16 @@ namespace ProductionGame.UI
 
         private void SelectNextResource()
         {
-            _currentProductIndex = (_currentProductIndex + 1) % _availableProducts.Length;
+            if (_availableProducts.Count == 0)
+            {
+                ClearCurrentResource();
+                return;
+            }
+
+            _currentProductIndex = (_currentProductIndex + 1) % _availableProducts.Count;
+            _currentProductIndex = Math.Min(_currentProductIndex, _availableProducts.Count);
+            if (_currentProductIndex >= _availableProducts.Count)
+                return;
 
             var selectedProduct = _availableProducts[_currentProductIndex];
             OnNextProductSelected?.Invoke(selectedProduct);

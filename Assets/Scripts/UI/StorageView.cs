@@ -8,6 +8,7 @@ namespace ProductionGame.UI
     public interface IStorageView
     {
         void UpdateCount(ResourcesInfo resourceInfo, int count);
+        void UpdateCoinCount(int count);
     }
 
     public class StorageView : MonoBehaviour, IStorageView
@@ -15,6 +16,7 @@ namespace ProductionGame.UI
         [SerializeField] private RectTransform _resourceGroup;
         [SerializeField] private ResourceStorageItemView _itemPrefab;
         [SerializeField] private bool _showOnStart;
+        [SerializeField] private ResourceStorageItemView _coinView;
 
         private Dictionary<ResourceType, ResourceStorageItemView> _items = new();
 
@@ -23,6 +25,11 @@ namespace ProductionGame.UI
             _itemPrefab.gameObject.SetActive(false);
             _resourceGroup.gameObject.SetActive(false);
             gameObject.SetActive(_showOnStart);
+        }
+
+        public void UpdateCoinCount(int count)
+        {
+            _coinView.SetCount(count);
         }
 
         public void UpdateCount(ResourcesInfo resourceInfo, int count)
