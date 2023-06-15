@@ -4,8 +4,10 @@ using System.Linq;
 
 namespace ProductionGame.Models
 {
-    public class StorageModel
+    public class StorageModel : IDisposable
     {
+        public event Action<ResourceType> OnResourcesChanged;
+
         private Dictionary<ResourceType, int> _resourceCounts;
 
         public StorageModel()
@@ -22,6 +24,8 @@ namespace ProductionGame.Models
                 _resourceCounts[resourceType] += count;
             else
                 _resourceCounts[resourceType] = count;
+
+            OnResourcesChanged?.Invoke(resourceType);
         }
 
         public int GetCount(ResourceType resourceType)
@@ -38,6 +42,8 @@ namespace ProductionGame.Models
 
             if (_resourceCounts.ContainsKey(resourceType))
                 _resourceCounts[resourceType]--;
+
+            OnResourcesChanged?.Invoke(resourceType);
         }
 
         public IEnumerable<ResourceType> GetAvailableResources()
@@ -57,6 +63,12 @@ namespace ProductionGame.Models
         public bool HasResource(params ResourceType[] resources)
         {
             return resources.All(resource => GetCount(resource) > 0);
+        }
+
+        public void Dispose()
+        {
+            OnResourcesChanged = null;
+            ;
         }
     }
 }

@@ -61,6 +61,7 @@ namespace ProductionGame
             _disposables.Add(_victoryWindowView);
             _disposables.Add(gameContext);
             _disposables.Add(storageController);
+            _disposables.Add(storageModel);
         }
 
         private void OnDestroy()

@@ -34,12 +34,13 @@ namespace ProductionGame.Controllers
             _resourcesInfo = resourcesInfo;
 
             _playerModel.OnCoinsChanged += _storageView.UpdateCoinCount;
+            _storageModel.OnResourcesChanged += OnResourcesChanged;
         }
+
 
         public void Add(ResourceType resourceType)
         {
             _storageModel.Add(resourceType, 1);
-            _storageView.UpdateCount(_resourcesInfo[resourceType], _storageModel.GetCount(resourceType));
 
             _gameDataSaver.Change(resourceType, _storageModel.GetCount(resourceType));
             _gameDataSaver.SaveChanges();
@@ -48,10 +49,14 @@ namespace ProductionGame.Controllers
         public void Remove(ResourceType resourceType)
         {
             _storageModel.Remove(resourceType);
-            _storageView.UpdateCount(_resourcesInfo[resourceType], _storageModel.GetCount(resourceType));
 
             _gameDataSaver.Change(resourceType, _storageModel.GetCount(resourceType));
             _gameDataSaver.SaveChanges();
+        }
+
+        private void OnResourcesChanged(ResourceType resourceType)
+        {
+            _storageView.UpdateCount(_resourcesInfo[resourceType], _storageModel.GetCount(resourceType));
         }
 
         public void Dispose()

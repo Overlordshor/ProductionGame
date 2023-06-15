@@ -19,7 +19,6 @@ namespace ProductionGame.UI
         [SerializeField] private RectTransform _popup;
         [SerializeField] private float _animationDuration = 0.5f;
 
-
         protected override void OnStart()
         {
             _popup.position = new Vector3(0f, -Screen.height, 0f);
@@ -31,7 +30,7 @@ namespace ProductionGame.UI
             gameObject.SetActive(true);
             _popup.DOKill();
             _popup
-                .DOMoveY(0f, _animationDuration)
+                .DOLocalMoveY(0f, _animationDuration)
                 .SetEase(Ease.OutBack);
         }
 
@@ -43,7 +42,7 @@ namespace ProductionGame.UI
         private void Hide()
         {
             _popup.DOKill();
-            _popup.DOMoveY(-Screen.height, _animationDuration)
+            _popup.DOLocalMoveY(-Screen.height, _animationDuration)
                 .SetEase(Ease.InBack)
                 .OnComplete(() => gameObject.SetActive(false));
         }
