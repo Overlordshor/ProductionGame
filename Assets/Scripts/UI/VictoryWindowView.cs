@@ -21,16 +21,15 @@ namespace ProductionGame.UI
 
         protected override void OnStart()
         {
-            _popup.position = new Vector3(0f, -Screen.height, 0f);
             _mainMenuButton.onClick.AddListener(HandleMainMenuClicked);
         }
 
         public void Show()
         {
+            _popup.anchoredPosition = new Vector3(0f, -Screen.height, 0f);
             gameObject.SetActive(true);
             _popup.DOKill();
-            _popup
-                .DOLocalMoveY(0f, _animationDuration)
+            _popup.DOLocalMoveY(0f, _animationDuration)
                 .SetEase(Ease.OutBack);
         }
 
@@ -42,6 +41,7 @@ namespace ProductionGame.UI
         private void Hide()
         {
             _popup.DOKill();
+            _popup.anchoredPosition = new Vector3(0f, 0, 0f);
             _popup.DOLocalMoveY(-Screen.height, _animationDuration)
                 .SetEase(Ease.InBack)
                 .OnComplete(() => gameObject.SetActive(false));

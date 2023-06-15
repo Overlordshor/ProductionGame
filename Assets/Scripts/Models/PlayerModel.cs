@@ -7,9 +7,9 @@ namespace ProductionGame.Models
         public event Action<int> OnCoinsChanged;
         public int Coins { get; private set; }
 
-        public PlayerModel()
+        public PlayerModel(int initCoinsCount)
         {
-            Coins = 0;
+            Coins = initCoinsCount;
         }
 
         public void AddCoins(int amount)

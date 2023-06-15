@@ -38,7 +38,6 @@ namespace ProductionGame.UI
             {
                 _resourceGroup.gameObject.SetActive(true);
                 CreateItem(resourceInfo);
-                return;
             }
 
             var itemView = _items[resourceInfo.ResourceType];
@@ -49,7 +48,6 @@ namespace ProductionGame.UI
         {
             var item = Instantiate(_itemPrefab, _resourceGroup);
             item.SetSprite(resourceInfo.Sprite);
-            item.SetCount(1);
             item.gameObject.SetActive(true);
             _items[resourceInfo.ResourceType] = item;
         }

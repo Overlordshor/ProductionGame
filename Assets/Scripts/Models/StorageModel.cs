@@ -8,11 +8,11 @@ namespace ProductionGame.Models
     {
         public event Action<ResourceType> OnResourcesChanged;
 
-        private Dictionary<ResourceType, int> _resourceCounts;
+        private readonly Dictionary<ResourceType, int> _resourceCounts;
 
-        public StorageModel()
+        public StorageModel(Dictionary<ResourceType, int> initStorageResources)
         {
-            _resourceCounts = new Dictionary<ResourceType, int>();
+            _resourceCounts = initStorageResources;
         }
 
         public void Add(ResourceType resourceType, int count)

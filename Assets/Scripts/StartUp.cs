@@ -24,10 +24,10 @@ namespace ProductionGame
 
         private void Start()
         {
-            var storageModel = new StorageModel();
-            var playerModel = new PlayerModel();
             var gameDataSaver = new GameDataSaver();
-            gameDataSaver.Load();
+            var gameData = gameDataSaver.Load();
+            var storageModel = new StorageModel(gameData.StorageResources);
+            var playerModel = new PlayerModel(gameData.CoinCount);
 
             var gameResources = _gameSettings.ResourcesInfo.ToDictionary(key => key.ResourceType);
             var marketController =
@@ -50,6 +50,7 @@ namespace ProductionGame
                 new MainMenuController(gameContext, _mainMenuView, _victoryWindowView, gameFactory);
 
             mainMenuController.ShowMainMenuView();
+            storageController.ApplyResource();
 
             _disposables.Add(mainMenuController);
             _disposables.Add(buildingsViewRepository);

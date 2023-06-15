@@ -34,9 +34,15 @@ namespace ProductionGame.Controllers
             _resourcesInfo = resourcesInfo;
 
             _playerModel.OnCoinsChanged += _storageView.UpdateCoinCount;
-            _storageModel.OnResourcesChanged += OnResourcesChanged;
+            _storageModel.OnResourcesChanged += UpdateResourcesCount;
         }
 
+        public void ApplyResource()
+        {
+            _storageView.UpdateCoinCount(_playerModel.Coins);
+            foreach (var availableResource in _storageModel.GetAvailableResources())
+                UpdateResourcesCount(availableResource);
+        }
 
         public void Add(ResourceType resourceType)
         {
@@ -54,7 +60,7 @@ namespace ProductionGame.Controllers
             _gameDataSaver.SaveChanges();
         }
 
-        private void OnResourcesChanged(ResourceType resourceType)
+        private void UpdateResourcesCount(ResourceType resourceType)
         {
             _storageView.UpdateCount(_resourcesInfo[resourceType], _storageModel.GetCount(resourceType));
         }
