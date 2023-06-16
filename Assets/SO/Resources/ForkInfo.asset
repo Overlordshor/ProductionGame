@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _name: Forks
   _resourceType: 5
-  _sprite: {fileID: 21300000, guid: 53831ffd2c1064d07b3fcc10982b1e0d, type: 3}
+  _sprite: {fileID: 21300000, guid: e757f951430d2504a9902d8ed1a0e550, type: 3}
   _price: 4
