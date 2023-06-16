@@ -7787,6 +7787,7 @@ MonoBehaviour:
   _blockInput: {fileID: 4000904219887820937}
   _showOnStart: 0
   _mainMenuButton: {fileID: 1298082078}
+  _winText: {fileID: 1161734080}
   _popup: {fileID: 1230275845}
   _animationDuration: 0.5
 --- !u!222 &632951579

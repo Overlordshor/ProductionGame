@@ -12,6 +12,7 @@ namespace ProductionGame.Controllers
         private readonly GameContext _gameContext;
         private readonly IGameFactory _gameFactory;
         private readonly IGameDataSaver _gameDataSaver;
+        private readonly PlayerModel _playerModel;
         private readonly IMainMenuView _mainMenuView;
         private readonly IVictoryWindowView _victoryWindowView;
 
@@ -19,12 +20,14 @@ namespace ProductionGame.Controllers
             IMainMenuView mainMenuView,
             IVictoryWindowView victoryWindowView,
             IGameFactory gameFactory,
-            IGameDataSaver gameDataSaver)
+            IGameDataSaver gameDataSaver,
+            PlayerModel playerModel)
         {
             _gameContext = gameContext;
             _mainMenuView = mainMenuView;
             _gameFactory = gameFactory;
             _gameDataSaver = gameDataSaver;
+            _playerModel = playerModel;
             _mainMenuView.OnStartGameClicked += StartGame;
             _mainMenuView.OnBuildCountSelected += SelectBuildCount;
 
@@ -58,6 +61,7 @@ namespace ProductionGame.Controllers
 
         private void ShowVictoryWindow()
         {
+            _victoryWindowView.SetCurrentResult(_playerModel.Coins);
             _victoryWindowView.Show();
         }
 

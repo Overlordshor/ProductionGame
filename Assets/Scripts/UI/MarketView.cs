@@ -72,7 +72,7 @@ namespace ProductionGame.UI
         {
             _productText.text = title;
             _productImage.sprite = sprite ?? _defaultSprite;
-            _priceText.text = price.ToString();
+            _priceText.text = $"Price: {price}";
             _priceText.gameObject.SetActive(price > 0);
         }
 

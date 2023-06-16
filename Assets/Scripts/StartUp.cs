@@ -47,7 +47,8 @@ namespace ProductionGame
                 buildingsViewRepository, processingBuildingController, marketController);
 
             var mainMenuController =
-                new MainMenuController(gameContext, _mainMenuView, _victoryWindowView, gameFactory, gameDataSaver);
+                new MainMenuController(gameContext, _mainMenuView, _victoryWindowView, gameFactory, gameDataSaver,
+                    playerModel);
 
             mainMenuController.ShowMainMenuView();
             storageController.ApplyResource();

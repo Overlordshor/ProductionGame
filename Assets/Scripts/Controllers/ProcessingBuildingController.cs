@@ -36,6 +36,9 @@ namespace ProductionGame.Controllers
         public void ShowProcessingBuildingWindow(ProcessingBuildingModel processingBuilding)
         {
             _processingBuilding = processingBuilding;
+
+            var productInfo = GetResourceInfo(_processingBuilding.ProductType);
+            _processingBuildingMenuView.SetProductName(productInfo?.Name);
             _processingBuildingMenuView.Show();
             UpdateStartButton();
         }
@@ -48,8 +51,8 @@ namespace ProductionGame.Controllers
             var resource2Info = GetResourceInfo(_processingBuilding.ResourceType2);
             var productInfo = GetResourceInfo(_processingBuilding.ProductType);
 
-
-            _processingBuildingMenuView.SetCurrentCraftView(new[] { resource1Info?.Sprite, resource2Info?.Sprite },
+            _processingBuildingMenuView.SetProductName(productInfo?.Name);
+            _processingBuildingMenuView.SetCurrentCraftImages(new[] { resource1Info?.Sprite, resource2Info?.Sprite },
                 productInfo?.Sprite);
 
             if (_processingBuilding.ProductType == ResourceType.None)

@@ -13,8 +13,9 @@ namespace ProductionGame.UI
         event Action<ResourceType, ResourceType> OnResourcesSelected;
         void Show();
         void SetStartButtonState(bool isActive);
-        void SetCurrentCraftView(Sprite[] resourceSprites, Sprite productSprite);
+        void SetCurrentCraftImages(Sprite[] resourceSprites, Sprite productSprite);
         void SetActiveStartButton(bool isEnable);
+        void SetProductName(string productInfoName);
     }
 
     public class ProcessingBuildingMenuView : View, IProcessingBuildingMenuView, IDisposable
@@ -78,7 +79,7 @@ namespace ProductionGame.UI
             _startAndStopText.SetText(text);
         }
 
-        public void SetCurrentCraftView(Sprite[] resourceSprites, Sprite productSprite)
+        public void SetCurrentCraftImages(Sprite[] resourceSprites, Sprite productSprite)
         {
             _resource1Image.sprite = resourceSprites.First() ?? _defaultSprite;
             _resource2Image.sprite = resourceSprites.Last() ?? _defaultSprite;
@@ -88,6 +89,11 @@ namespace ProductionGame.UI
         public void SetActiveStartButton(bool isEnable)
         {
             _startAndStopButton.interactable = isEnable;
+        }
+
+        public void SetProductName(string productInfoName)
+        {
+            _productText.text = productInfoName;
         }
 
         public void Dispose()
